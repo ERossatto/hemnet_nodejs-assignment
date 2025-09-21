@@ -8,14 +8,28 @@ import { Municipality } from "../entities/municipality.entity";
 import { IMunicipalityRepository } from "../repositories/municipality.domain-interface-repository";
 import { PackageTypeValue } from "../value-objects/package-type.value-object";
 
-export class PriceService {
+export interface IPriceDomainService {
+  getPriceByPackageType(
+    packageType: PackageTypeValue,
+    municipalityId?: MunicipalityId
+  ): Promise<Price | null>;
+  createPriceForPackageType(props: {
+    packageType: PackageTypeValue;
+    valueCents: ValueCents;
+    currency: Currency;
+    effectiveDate: Date;
+    municipalityId?: MunicipalityId;
+  }): Promise<Price>;
+}
+
+export class PriceDomainService implements IPriceDomainService {
   constructor(
     private readonly priceRepository: IPriceRepository,
     private readonly packageRepository: IPackageRepository,
     private readonly municipalityRepository: IMunicipalityRepository
   ) {}
 
-  public async getPackagePriceByType(
+  public async getPriceByPackageType(
     packageType: PackageTypeValue,
     municipalityId?: MunicipalityId
   ): Promise<Price | null> {
@@ -63,29 +77,31 @@ export class PriceService {
     return standardCandidates[0] ?? null;
   }
 
-  public async setPackagePriceByType(
-    packageType: PackageTypeValue,
-    amountCents: ValueCents,
-    currency: Currency,
-    effectiveDate: Date,
-    municipalityId?: MunicipalityId
-  ): Promise<Price> {
-    const packageEntity =
-      await this.packageRepository.findByPackageType(packageType);
+  public async createPriceForPackageType(props: {
+    packageType: PackageTypeValue;
+    valueCents: ValueCents;
+    currency: Currency;
+    effectiveDate: Date;
+    municipalityId?: MunicipalityId;
+  }): Promise<Price> {
+    const packageEntity = await this.packageRepository.findByPackageType(
+      props.packageType
+    );
 
     if (!packageEntity) {
-      throw new Error(`Package with type ${packageType} not found`);
+      throw new Error(`Package with type ${props.packageType} not found`);
     }
 
     let municipality: Municipality | undefined = undefined;
 
-    if (municipalityId) {
-      const foundMunicipality =
-        await this.municipalityRepository.findById(municipalityId);
+    if (props.municipalityId) {
+      const foundMunicipality = await this.municipalityRepository.findById(
+        props.municipalityId
+      );
 
       if (!foundMunicipality) {
         throw new Error(
-          `Municipality with id ${municipalityId.value} not found`
+          `Municipality with id ${props.municipalityId.value} not found`
         );
       }
 
@@ -94,9 +110,9 @@ export class PriceService {
 
     const newPrice = Price.create({
       package: packageEntity,
-      valueCents: amountCents,
-      currency,
-      effectiveDate,
+      valueCents: props.valueCents,
+      currency: props.currency,
+      effectiveDate: props.effectiveDate,
       municipality,
     });
 

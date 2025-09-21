@@ -10,14 +10,24 @@ export interface PricingPeriod {
   readonly municipalityId?: MunicipalityId;
 }
 
-export class PriceHistoryService {
+export interface IPriceHistoryDomainService {
+  getPricingHistoryByYearAndPackageType(props: {
+    packageType: PackageTypeValue;
+    year: number;
+    municipalityId?: MunicipalityId;
+  }): Promise<PricingPeriod[]>;
+}
+
+export class PriceHistoryDomainService implements IPriceHistoryDomainService {
   constructor(private readonly priceRepository: IPriceRepository) {}
 
-  public async getPricingHistoryByYearAndPackageType(
-    packageType: PackageTypeValue,
-    year: number,
-    municipalityId?: MunicipalityId
-  ): Promise<PricingPeriod[]> {
+  public async getPricingHistoryByYearAndPackageType(props: {
+    packageType: PackageTypeValue;
+    year: number;
+    municipalityId?: MunicipalityId;
+  }): Promise<PricingPeriod[]> {
+    const { packageType, year, municipalityId } = props;
+
     const allPricesForPackage =
       await this.priceRepository.findByPackageType(packageType);
 

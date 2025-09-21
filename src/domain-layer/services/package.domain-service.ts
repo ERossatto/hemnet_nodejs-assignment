@@ -8,15 +8,19 @@ import { PlusPackage } from "../entities/packages/plus-package.entity";
 import { PremiumPackage } from "../entities/packages/premium-package.entity";
 import { IPackageRepository } from "../repositories/package.domain-interface-repository";
 
-export class PackageService {
+export interface IPackageDomainService {
+  createPackageByType(packageType: PackageTypeValue): Promise<AbstractPackage>;
+}
+
+export class PackageDomainService implements IPackageDomainService {
   constructor(private readonly packageRepository: IPackageRepository) {}
 
   public async createPackageByType(
     packageType: PackageTypeValue
   ): Promise<AbstractPackage> {
-    // Return existing package of this type if present
     const existingPackage =
       await this.packageRepository.findByPackageType(packageType);
+
     if (existingPackage) return existingPackage;
 
     let packageEntity: AbstractPackage;
