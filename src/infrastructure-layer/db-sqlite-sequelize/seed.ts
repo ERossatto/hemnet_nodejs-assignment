@@ -1,10 +1,10 @@
-import { Package } from "@infrastructure/db-sqlite-sequelize/models/package.sequelize-model";
-import { Price } from "@infrastructure/db-sqlite-sequelize/models/price.sequelize-model";
-import { Municipality } from "@infrastructure/db-sqlite-sequelize/models/municipality.sequelize-model";
-import { PACKAGE_TYPES } from "@domain/value-objects/package-type.value-object";
-import { STORAGE_SIZES_IN_GB } from "@domain/value-objects/package-storage-capacity.value-object";
-import { BACKUP_FREQUENCY_TYPES } from "@domain/value-objects/package-backup-frequency.value-object";
-import { generateUUID } from "@domain/helpers/uuid.domain-helper";
+import { Package } from "./models/package.sequelize-model";
+import { Price } from "./models/price.sequelize-model";
+import { Municipality } from "./models/municipality.sequelize-model";
+import { PACKAGE_TYPES } from "../../domain-layer/value-objects/package-type.value-object";
+import { STORAGE_SIZES_IN_GB } from "../../domain-layer/value-objects/package-storage-capacity.value-object";
+import { BACKUP_FREQUENCY_TYPES } from "../../domain-layer/value-objects/package-backup-frequency.value-object";
+import { generateUUID } from "../../domain-layer/helpers/uuid.domain-helper";
 
 export const seedDb = async () => {
   // Clean up existing data

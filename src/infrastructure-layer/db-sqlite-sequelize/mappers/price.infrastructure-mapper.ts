@@ -1,9 +1,9 @@
-import { Price as PriceModel } from "@infrastructure/db-sqlite-sequelize/models/price.sequelize-model";
-import { Package as PackageModel } from "@infrastructure/db-sqlite-sequelize/models/package.sequelize-model";
-import { Municipality as MunicipalityModel } from "@infrastructure/db-sqlite-sequelize/models/municipality.sequelize-model";
-import { Price } from "@domain/aggregates/price.aggregate";
-import { PriceId } from "@domain/identifiers/price-id.identifier";
-import { ValueCents, Currency } from "@domain/value-objects";
+import { Price as PriceModel } from "../models/price.sequelize-model";
+import { Package as PackageModel } from "../models/package.sequelize-model";
+import { Municipality as MunicipalityModel } from "../models/municipality.sequelize-model";
+import { Price } from "../../../domain-layer/aggregates/price.aggregate";
+import { PriceId } from "../../../domain-layer/identifiers/price-id.identifier";
+import { ValueCents, Currency } from "../../../domain-layer/value-objects";
 import { PackageMapper } from "./package.infrastructure-mapper";
 import { MunicipalityMapper } from "./municipality.infrastructure-mapper";
 

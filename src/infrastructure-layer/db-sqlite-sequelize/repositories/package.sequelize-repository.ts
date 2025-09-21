@@ -1,10 +1,10 @@
-import { IPackageRepository } from "@domain/repositories/package.domain-interface-repository";
-import { BasicPackage } from "@domain/entities/packages/basic-package.entity";
-import { PlusPackage } from "@domain/entities/packages/plus-package.entity";
-import { PremiumPackage } from "@domain/entities/packages/premium-package.entity";
-import { PackageTypeValue } from "@domain/value-objects/package-type.value-object";
-import { Package as PackageModel } from "@infrastructure/db-sqlite-sequelize/models/package.sequelize-model";
-import { PackageMapper } from "@infrastructure/db-sqlite-sequelize/mappers/package.infrastructure-mapper";
+import { IPackageRepository } from "../../../domain-layer/repositories/package.domain-interface-repository";
+import { BasicPackage } from "../../../domain-layer/entities/packages/basic-package.entity";
+import { PlusPackage } from "../../../domain-layer/entities/packages/plus-package.entity";
+import { PremiumPackage } from "../../../domain-layer/entities/packages/premium-package.entity";
+import { PackageTypeValue } from "../../../domain-layer/value-objects/package-type.value-object";
+import { Package as PackageModel } from "../models/package.sequelize-model";
+import { PackageMapper } from "../mappers/package.infrastructure-mapper";
 
 export class PackageSequelizeRepository implements IPackageRepository {
   async findByPackageType(

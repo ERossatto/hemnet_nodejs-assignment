@@ -6,7 +6,7 @@ import {
   type InferCreationAttributes,
   Model,
 } from "sequelize";
-import { sequelizeConnection } from "@infrastructure/db-sqlite-sequelize/config";
+import { sequelizeConnection } from "../config";
 import { Package } from "./package.sequelize-model";
 import { Municipality } from "./municipality.sequelize-model";
 

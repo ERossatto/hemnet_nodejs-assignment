@@ -1,6 +1,6 @@
-import { sequelizeConnection } from "@infrastructure/db-sqlite-sequelize/config";
-import { Package } from "@infrastructure/db-sqlite-sequelize/models/package.sequelize-model";
-import { Price } from "@infrastructure/db-sqlite-sequelize/models/price.sequelize-model";
+import { sequelizeConnection } from "../../infrastructure-layer/db-sqlite-sequelize/config";
+import { Package } from "../../infrastructure-layer/db-sqlite-sequelize/models/package.sequelize-model";
+import { Price } from "../../infrastructure-layer/db-sqlite-sequelize/models/price.sequelize-model";
 
 export default {
   async getAll() {

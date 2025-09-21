@@ -4,7 +4,7 @@ import {
   type InferCreationAttributes,
   Model,
 } from "sequelize";
-import { sequelizeConnection } from "@infrastructure/db-sqlite-sequelize/config";
+import { sequelizeConnection } from "../config";
 
 class Municipality extends Model<
   InferAttributes<Municipality>,

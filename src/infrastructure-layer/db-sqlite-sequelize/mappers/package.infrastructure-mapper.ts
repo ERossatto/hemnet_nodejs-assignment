@@ -1,16 +1,16 @@
-import { Package as PackageModel } from "@infrastructure/db-sqlite-sequelize/models/package.sequelize-model";
+import { Package as PackageModel } from "../models/package.sequelize-model";
 import {
   BasicPackage,
   PremiumPackage,
   PlusPackage,
-} from "@domain/entities/packages";
-import { PackageId } from "@domain/identifiers/package-id.identifier";
+} from "../../../domain-layer/entities/packages";
+import { PackageId } from "../../../domain-layer/identifiers/package-id.identifier";
 import {
   PackageStorageCapacity,
   PackageBackupFrequency,
   PackageType,
   PACKAGE_TYPES,
-} from "@domain/value-objects";
+} from "../../../domain-layer/value-objects";
 
 export class PackageMapper {
   static toDomain(row: PackageModel) {

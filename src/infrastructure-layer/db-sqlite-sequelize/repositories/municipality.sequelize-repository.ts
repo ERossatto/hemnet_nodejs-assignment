@@ -1,8 +1,8 @@
-import { IMunicipalityRepository } from "@domain/repositories/municipality.domain-interface-repository";
-import { Municipality } from "@domain/entities/municipality.entity";
-import { MunicipalityId } from "@domain/identifiers/municipality-id.identifier";
-import { Municipality as MunicipalityModel } from "@infrastructure/db-sqlite-sequelize/models/municipality.sequelize-model";
-import { MunicipalityMapper } from "@infrastructure/db-sqlite-sequelize/mappers/municipality.infrastructure-mapper";
+import { IMunicipalityRepository } from "../../../domain-layer/repositories/municipality.domain-interface-repository";
+import { Municipality } from "../../../domain-layer/entities/municipality.entity";
+import { MunicipalityId } from "../../../domain-layer/identifiers/municipality-id.identifier";
+import { Municipality as MunicipalityModel } from "../models/municipality.sequelize-model";
+import { MunicipalityMapper } from "../mappers/municipality.infrastructure-mapper";
 
 export class MunicipalitySequelizeRepository
   implements IMunicipalityRepository

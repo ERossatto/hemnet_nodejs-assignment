@@ -1,10 +1,10 @@
-import { IPriceRepository } from "@domain/repositories/price.domain-interface-repository";
-import { Price } from "@domain/aggregates/price.aggregate";
-import { PackageTypeValue } from "@domain/value-objects/package-type.value-object";
-import { Price as PriceModel } from "@infrastructure/db-sqlite-sequelize/models/price.sequelize-model";
-import { Package as PackageModel } from "@infrastructure/db-sqlite-sequelize/models/package.sequelize-model";
-import { Municipality as MunicipalityModel } from "@infrastructure/db-sqlite-sequelize/models/municipality.sequelize-model";
-import { PriceMapper } from "@infrastructure/db-sqlite-sequelize/mappers/price.infrastructure-mapper";
+import { IPriceRepository } from "../../../domain-layer/repositories/price.domain-interface-repository";
+import { Price } from "../../../domain-layer/aggregates/price.aggregate";
+import { PackageTypeValue } from "../../../domain-layer/value-objects/package-type.value-object";
+import { Price as PriceModel } from "../models/price.sequelize-model";
+import { Package as PackageModel } from "../models/package.sequelize-model";
+import { Municipality as MunicipalityModel } from "../models/municipality.sequelize-model";
+import { PriceMapper } from "../mappers/price.infrastructure-mapper";
 
 export class PriceSequelizeRepository implements IPriceRepository {
   async findByPackageType(packageType: PackageTypeValue): Promise<Price[]> {

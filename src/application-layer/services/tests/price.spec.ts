@@ -1,7 +1,7 @@
-import { sequelizeConnection } from "@infrastructure/db-sqlite-sequelize/config";
-import { Package } from "@infrastructure/db-sqlite-sequelize/models/package.sequelize-model";
-import PackageService from "@application/services/package.service";
-import PriceService from "@application/services/price.service";
+import { sequelizeConnection } from "../../../infrastructure-layer/db-sqlite-sequelize/config";
+import { Package } from "../../../infrastructure-layer/db-sqlite-sequelize/models/package.sequelize-model";
+import PackageService from "../package.service";
+import PriceService from "../price.service";
 
 describe("PriceService", () => {
   // Set the db object to a variable which can be accessed throughout the whole test file

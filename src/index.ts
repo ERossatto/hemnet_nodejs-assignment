@@ -1,7 +1,7 @@
 import express from "express";
-import packagesRoutes from "@presentation/routes/package.routes";
-import { sequelizeConnection } from "@infrastructure/db-sqlite-sequelize/config";
-import { seedDb } from "@infrastructure/db-sqlite-sequelize/seed";
+import packagesRoutes from "./presentation-layer/routes/package.routes";
+import { sequelizeConnection } from "./infrastructure-layer/db-sqlite-sequelize/config";
+import { seedDb } from "./infrastructure-layer/db-sqlite-sequelize/seed";
 
 const port = 3000;
 export const app = express();

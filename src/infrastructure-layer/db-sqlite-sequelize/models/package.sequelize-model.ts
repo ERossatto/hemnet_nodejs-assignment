@@ -4,7 +4,7 @@ import {
   type InferCreationAttributes,
   Model,
 } from "sequelize";
-import { sequelizeConnection } from "@infrastructure/db-sqlite-sequelize/config";
+import { sequelizeConnection } from "../config";
 import {
   type BackupFrequencyTypeValue,
   type PackageTypeValue,
@@ -12,7 +12,7 @@ import {
   BACKUP_FREQUENCY_TYPES,
   PACKAGE_TYPES,
   STORAGE_SIZES_IN_GB,
-} from "@domain/value-objects";
+} from "../../../domain-layer/value-objects";
 
 class Package extends Model<
   InferAttributes<Package>,

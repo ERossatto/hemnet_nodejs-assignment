@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import PackageService from "@application/services/package.service";
+import PackageService from "../../application-layer/services/package.service";
 
 export default {
   async getAll(_: Request, response: Response) {
