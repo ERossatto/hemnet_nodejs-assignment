@@ -1,44 +1,98 @@
-import { sequelizeConnection } from "../../infrastructure-layer/db-sqlite-sequelize/config";
-import { Package } from "../../infrastructure-layer/db-sqlite-sequelize/models/package.sequelize-model";
-import { Price } from "../../infrastructure-layer/db-sqlite-sequelize/models/price.sequelize-model";
+import {
+  Currency,
+  IMunicipalityRepository,
+  IPackageRepository,
+  MunicipalityName,
+  IPackageDomainService,
+  PackageTypeValue,
+  IPriceDomainService,
+  ValueCents,
+} from "../../domain-layer";
 
-export default {
-  async getAll() {
-    return await Package.findAll({
-      include: [{ model: Price, as: "prices" }],
+export class PackageService {
+  constructor(
+    private readonly packageRepository: IPackageRepository,
+    private readonly municipalityRepository: IMunicipalityRepository,
+    private readonly priceDomainService: IPriceDomainService,
+    private readonly packageDomainService: IPackageDomainService
+  ) {}
+
+  async addPackagePrice(props: {
+    packageType: PackageTypeValue;
+    valueCents: number;
+    currency: string;
+    effectiveDate: Date;
+    municipalityName?: string;
+  }) {
+    const packageEntity = await this.packageRepository.findByPackageType(
+      props.packageType
+    );
+
+    if (!packageEntity) {
+      throw new Error(`Package with type ${props.packageType} not found`);
+    }
+
+    const newPrice = await this._createPrice({
+      ...props,
     });
-  },
-  async updatePackagePrice(pack: Package, newPriceCents: number) {
-    try {
-      const newPackage = await sequelizeConnection.transaction(async (t) => {
-        await Price.create(
-          {
-            packageId: pack.id,
-            priceCents: pack.priceCents,
-          },
-          { transaction: t }
+
+    return newPrice;
+  }
+
+  async createPackage(props: {
+    packageType: PackageTypeValue;
+    valueCents: number;
+    currency: string;
+    effectiveDate: Date;
+    municipalityName?: string;
+  }) {
+    await this.packageDomainService.createPackageByType(props.packageType);
+
+    const newPrice = await this._createPrice({
+      ...props,
+    });
+
+    return newPrice;
+  }
+
+  private async _createPrice(props: {
+    packageType: PackageTypeValue;
+    valueCents: number;
+    currency: string;
+    effectiveDate: Date;
+    municipalityName?: string;
+  }) {
+    const valueCentsObject = ValueCents.create(props.valueCents);
+    const currencyObject = Currency.create(props.currency);
+    const effectiveDateObject = new Date(props.effectiveDate);
+
+    let municipalityId = undefined;
+    if (props.municipalityName) {
+      const municipalityNameObject = MunicipalityName.create(
+        props.municipalityName
+      );
+      const municipalityObject = await this.municipalityRepository.findByName(
+        municipalityNameObject
+      );
+
+      if (!municipalityObject) {
+        // TODO: shall we throw or create? to create we need code and country
+        throw new Error(
+          `Municipality with name ${props.municipalityName} not found`
         );
+      }
 
-        pack.priceCents = newPriceCents;
-
-        return pack.save({ transaction: t });
-      });
-
-      return newPackage;
-    } catch (err: unknown) {
-      throw new Error("Error handling the transaction");
+      municipalityId = municipalityObject.id;
     }
-  },
 
-  async priceFor(municipality: string) {
-    const foundPackage = await Package.findOne({
-      where: { name: municipality },
+    const newPrice = await this.priceDomainService.createPriceForPackageType({
+      packageType: props.packageType,
+      valueCents: valueCentsObject,
+      currency: currencyObject,
+      effectiveDate: effectiveDateObject,
+      municipalityId,
     });
 
-    if (!foundPackage) {
-      return null;
-    }
-
-    return foundPackage.priceCents;
-  },
-};
+    return newPrice;
+  }
+}
