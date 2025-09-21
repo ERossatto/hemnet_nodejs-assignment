@@ -13,33 +13,49 @@ export const seedDb = async () => {
   await Municipality.destroy({ truncate: true });
 
   // Seed municipalities first (since prices can reference them)
-  const stockholmId = generateUUID();
-  const gothenburgId = generateUUID();
-  const malmoId = generateUUID();
+  const stockholm = {
+    id: generateUUID(),
+    name: "Stockholm",
+    code: "0180",
+    country: "Sweden",
+  };
+  const gothenburg = {
+    id: generateUUID(),
+    name: "Göteborg",
+    code: "1480",
+    country: "Sweden",
+  };
+
+  const malmo = {
+    id: generateUUID(),
+    name: "Malmö",
+    code: "1280",
+    country: "Sweden",
+  };
 
   await Municipality.bulkCreate(
     [
       {
-        id: stockholmId,
-        name: "Stockholm",
-        code: "0180",
-        country: "Sweden",
+        id: stockholm.id,
+        name: stockholm.name,
+        code: stockholm.code,
+        country: stockholm.country,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        id: gothenburgId,
-        name: "Gothenburg",
-        code: "1480",
-        country: "Sweden",
+        id: gothenburg.id,
+        name: gothenburg.name,
+        code: gothenburg.code,
+        country: gothenburg.country,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        id: malmoId,
-        name: "Malmö",
-        code: "1280",
-        country: "Sweden",
+        id: malmo.id,
+        name: malmo.name,
+        code: malmo.code,
+        country: malmo.country,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -85,22 +101,24 @@ export const seedDb = async () => {
   const basic = (await Package.findOne({
     where: { type: PACKAGE_TYPES.Basic },
   })) as Package;
+
   const plus = (await Package.findOne({
     where: { type: PACKAGE_TYPES.Plus },
   })) as Package;
+
   const premium = (await Package.findOne({
     where: { type: PACKAGE_TYPES.Premium },
   })) as Package;
 
   // Get municipalities for price seeding
-  const stockholm = (await Municipality.findOne({
-    where: { name: "Stockholm" },
+  const stockholmFromDb = (await Municipality.findOne({
+    where: { name: stockholm.name },
   })) as Municipality;
-  const gothenburg = (await Municipality.findOne({
-    where: { name: "Gothenburg" },
+  const gothenburgFromDb = (await Municipality.findOne({
+    where: { name: gothenburg.name },
   })) as Municipality;
-  const malmo = (await Municipality.findOne({
-    where: { name: "Malmö" },
+  const malmoFromDb = (await Municipality.findOne({
+    where: { name: malmo.name },
   })) as Municipality;
 
   // Seed prices with new structure (including currency, effectiveDate, and optional municipalityId)
@@ -125,7 +143,7 @@ export const seedDb = async () => {
         packageId: basic.id,
         currency: "SEK",
         effectiveDate: new Date("2024-06-01"),
-        municipalityId: stockholm.id, // Stockholm-specific price
+        municipalityId: stockholmFromDb.id, // Stockholm-specific price
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -152,7 +170,7 @@ export const seedDb = async () => {
         packageId: plus.id,
         currency: "SEK",
         effectiveDate: new Date("2024-03-01"),
-        municipalityId: gothenburg.id, // Gothenburg-specific price
+        municipalityId: gothenburgFromDb.id, // Gothenburg-specific price
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -162,7 +180,7 @@ export const seedDb = async () => {
         packageId: plus.id,
         currency: "SEK",
         effectiveDate: new Date("2024-09-01"),
-        municipalityId: malmo.id, // Malmö-specific price
+        municipalityId: malmoFromDb.id, // Malmö-specific price
         createdAt: new Date(),
         updatedAt: new Date(),
       },
