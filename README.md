@@ -14,16 +14,16 @@ So all the IT descriptions are there as they were before.
 I also kept the original implementation commented out.
 But I had to adapt the calls to work with the new implementation of the assignment.
 
-**PASS** src/application-layer/services/tests/price.spec.ts
-PriceService
-✅ Returns the pricing history for the provided year and package (62 ms)
-✅ Supports filtering on municipality (23 ms)
+- **PASS** src/application-layer/services/tests/price.spec.ts
+- PriceService
+- ✅ Returns the pricing history for the provided year and package (62 ms)
+- ✅ Supports filtering on municipality (23 ms)
 
-**PASS** src/application-layer/services/tests/package.spec.ts
-PackageService
-✅ Updates the current price of the provided package (35 ms)
-✅ Stores the old price of the provided package in its price history (16 ms)
-✅ Supports adding a price for a specific municipality (16 ms)
+- **PASS** src/application-layer/services/tests/package.spec.ts
+- PackageService
+- ✅ Updates the current price of the provided package (35 ms)
+- ✅ Stores the old price of the provided package in its price history (16 ms)
+- ✅ Supports adding a price for a specific municipality (16 ms)
 
 # Concepts I did use in this assignment
 
