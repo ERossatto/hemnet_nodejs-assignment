@@ -1,8 +1,8 @@
 import { sequelizeConnection } from "../../../infrastructure-layer/db-sqlite-sequelize/config";
 import { seedDb } from "../../../infrastructure-layer/db-sqlite-sequelize/seed";
-import { PackageService } from "../package.service";
-import { PriceService } from "../price.service";
-import { MunicipalityService } from "../municipality.service";
+import { PackageApplicationService } from "../package.application-service";
+import { PriceApplicationService } from "../price.application-service";
+import { MunicipalityApplicationService } from "../municipality.application-service";
 import { PackageSequelizeRepository } from "../../../infrastructure-layer/db-sqlite-sequelize/repositories/package.sequelize-repository";
 import { PriceSequelizeRepository } from "../../../infrastructure-layer/db-sqlite-sequelize/repositories/price.sequelize-repository";
 import { MunicipalitySequelizeRepository } from "../../../infrastructure-layer/db-sqlite-sequelize/repositories/municipality.sequelize-repository";
@@ -18,9 +18,9 @@ describe("PackageService", () => {
   const db = sequelizeConnection;
 
   // Service instances
-  let packageService: PackageService;
-  let priceService: PriceService;
-  let municipalityService: MunicipalityService;
+  let packageService: PackageApplicationService;
+  let priceService: PriceApplicationService;
+  let municipalityService: MunicipalityApplicationService;
 
   // Before any tests run, clear the DB and run migrations with Sequelize sync()
   beforeEach(async () => {
@@ -44,20 +44,22 @@ describe("PackageService", () => {
     );
 
     // Setup application services
-    packageService = new PackageService(
-      packageRepository,
-      municipalityRepository,
-      priceDomainService,
-      packageDomainService
-    );
-
-    priceService = new PriceService(
+    priceService = new PriceApplicationService(
       priceRepository,
       priceHistoryDomainService,
-      priceDomainService
+      priceDomainService,
+      municipalityRepository
     );
 
-    municipalityService = new MunicipalityService(municipalityRepository);
+    packageService = new PackageApplicationService(
+      packageRepository,
+      packageDomainService,
+      priceService
+    );
+
+    municipalityService = new MunicipalityApplicationService(
+      municipalityRepository
+    );
   });
 
   afterAll(async () => {
@@ -172,7 +174,7 @@ describe("PackageService", () => {
     */
 
     // Step 1: Use Basic package type (already created by seed)
-    // Step 2: Find the municipality
+    // Step 2: Find the municipality (already created by seed)
     const goteborg =
       await municipalityService.getMunicipalityByName("Göteborg");
     expect(goteborg).not.toBeNull();

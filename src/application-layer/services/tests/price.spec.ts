@@ -1,8 +1,8 @@
 import { sequelizeConnection } from "../../../infrastructure-layer/db-sqlite-sequelize/config";
 import { seedDb } from "../../../infrastructure-layer/db-sqlite-sequelize/seed";
-import { PackageService } from "../package.service";
-import { PriceService } from "../price.service";
-import { MunicipalityService } from "../municipality.service";
+import { PackageApplicationService } from "../package.application-service";
+import { PriceApplicationService } from "../price.application-service";
+import { MunicipalityApplicationService } from "../municipality.application-service";
 import { PackageSequelizeRepository } from "../../../infrastructure-layer/db-sqlite-sequelize/repositories/package.sequelize-repository";
 import { PriceSequelizeRepository } from "../../../infrastructure-layer/db-sqlite-sequelize/repositories/price.sequelize-repository";
 import { MunicipalitySequelizeRepository } from "../../../infrastructure-layer/db-sqlite-sequelize/repositories/municipality.sequelize-repository";
@@ -18,9 +18,9 @@ describe("PriceService", () => {
   const db = sequelizeConnection;
 
   // Service instances
-  let packageService: PackageService;
-  let priceService: PriceService;
-  let municipalityService: MunicipalityService;
+  let packageService: PackageApplicationService;
+  let priceService: PriceApplicationService;
+  let municipalityService: MunicipalityApplicationService;
 
   // Before any tests run, clear the DB and run migrations with Sequelize sync()
   beforeEach(async () => {
@@ -44,20 +44,22 @@ describe("PriceService", () => {
     );
 
     // Setup application services
-    packageService = new PackageService(
-      packageRepository,
-      municipalityRepository,
-      priceDomainService,
-      packageDomainService
-    );
-
-    priceService = new PriceService(
+    priceService = new PriceApplicationService(
       priceRepository,
       priceHistoryDomainService,
-      priceDomainService
+      priceDomainService,
+      municipalityRepository
     );
 
-    municipalityService = new MunicipalityService(municipalityRepository);
+    packageService = new PackageApplicationService(
+      packageRepository,
+      packageDomainService,
+      priceService
+    );
+
+    municipalityService = new MunicipalityApplicationService(
+      municipalityRepository
+    );
   });
 
   afterAll(async () => {
@@ -160,12 +162,19 @@ describe("PriceService", () => {
       year: 2020,
     });
 
-    console.log("priceHistory: ", JSON.stringify(priceHistory, null, 2));
-
     // The test expects pricing history grouped by municipality with all prices for that year
     // This would need to be implemented in the PriceService.getPriceHistory method
     // For now, we verify that we get results for the year 2020
     expect(priceHistory).toBeDefined();
+
+    // Verify that no prices from 2019 are included in the 2020 price history
+    if (Array.isArray(priceHistory)) {
+      const pricesFrom2019 = priceHistory.filter((entry: any) => {
+        const effectiveDate = new Date(entry.price.props.effectiveDate);
+        return effectiveDate.getFullYear() === 2019;
+      });
+      expect(pricesFrom2019).toHaveLength(0);
+    }
   });
 
   it("Supports filtering on municipality", async () => {

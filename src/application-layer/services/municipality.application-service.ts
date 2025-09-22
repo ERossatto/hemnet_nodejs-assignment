@@ -4,7 +4,13 @@ import {
   MunicipalityName,
 } from "../../domain-layer";
 
-export class MunicipalityService {
+export interface IMunicipalityApplicationService {
+  getMunicipalityByName(name: string): Promise<Municipality | null>;
+}
+
+export class MunicipalityApplicationService
+  implements IMunicipalityApplicationService
+{
   constructor(
     private readonly municipalityRepository: IMunicipalityRepository
   ) {}

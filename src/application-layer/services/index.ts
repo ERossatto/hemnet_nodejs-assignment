@@ -1,3 +1,3 @@
-export * from "./municipality.service";
-export * from "./package.service";
-export * from "./price.service";
+export * from "./municipality.application-service";
+export * from "./package.application-service";
+export * from "./price.application-service";
