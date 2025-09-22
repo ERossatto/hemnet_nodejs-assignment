@@ -1,0 +1,66 @@
+import { IMunicipalityApplicationService } from "../../application-layer/services/municipality.application-service";
+import {
+  CreateMunicipalityRequestDto,
+  CreateMunicipalityResponseDto,
+  GetMunicipalityByNameResponseDto,
+} from "../types";
+import { MunicipalityMapper } from "../mappers";
+
+export interface IMunicipalityController {
+  createMunicipality(
+    req: CreateMunicipalityRequestDto
+  ): Promise<CreateMunicipalityResponseDto>;
+  getMunicipalityByName(req: {
+    name: string;
+  }): Promise<GetMunicipalityByNameResponseDto>;
+}
+
+export class MunicipalityController implements IMunicipalityController {
+  constructor(
+    private readonly municipalityApplicationService: IMunicipalityApplicationService
+  ) {}
+
+  public async createMunicipality(
+    req: CreateMunicipalityRequestDto
+  ): Promise<CreateMunicipalityResponseDto> {
+    const { name, code, country } = req;
+
+    // Input validation (presentation layer responsibility)
+    if (!name || !code || !country) {
+      throw new Error(
+        "Missing required fields: name, code, and country are required"
+      );
+    }
+
+    // Delegate to application service (proper Clean Architecture)
+    const municipality =
+      await this.municipalityApplicationService.createMunicipality({
+        name,
+        code,
+        country,
+      });
+
+    // Map domain entity to response DTO using mapper (presentation layer responsibility)
+    return MunicipalityMapper.toCreateResponseDto(municipality);
+  }
+
+  public async getMunicipalityByName(req: {
+    name: string;
+  }): Promise<GetMunicipalityByNameResponseDto> {
+    const { name } = req;
+
+    if (!name) {
+      throw new Error("Municipality name is required");
+    }
+
+    const municipality =
+      await this.municipalityApplicationService.getMunicipalityByName(name);
+
+    if (!municipality) {
+      throw new Error(`Municipality with name '${name}' not found`);
+    }
+
+    // Map domain entity to response DTO using mapper
+    return MunicipalityMapper.toGetByNameResponseDto(municipality);
+  }
+}

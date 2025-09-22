@@ -1,5 +1,7 @@
 import express from "express";
 import packagesRoutes from "./routes/package.routes";
+import priceRoutes from "./routes/price.routes";
+import municipalityRoutes from "./routes/municipality.routes";
 import { sequelizeConnection } from "../infrastructure-layer/db-sqlite-sequelize/config";
 import { seedDb } from "../infrastructure-layer/db-sqlite-sequelize/seed";
 
@@ -18,4 +20,7 @@ sequelizeConnection.sync({ force: true }).then(async () => {
   await seedDb();
 });
 
+// Mount routes with their prefixes
+app.use("/api/municipalities", municipalityRoutes);
+app.use("/api/prices", priceRoutes);
 app.use("/api/packages", packagesRoutes);
