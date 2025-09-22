@@ -4,7 +4,7 @@ import { Municipality } from "./models/municipality.sequelize-model";
 import { PACKAGE_TYPES } from "../../domain-layer/value-objects/package-type.value-object";
 import { STORAGE_SIZES_IN_GB } from "../../domain-layer/value-objects/package-storage-capacity.value-object";
 import { BACKUP_FREQUENCY_TYPES } from "../../domain-layer/value-objects/package-backup-frequency.value-object";
-import { generateUUID } from "../../domain-layer/helpers/uuid.domain-helper";
+import { randomUUID } from "crypto";
 
 export const seedDb = async () => {
   // Clean up existing data
@@ -14,20 +14,20 @@ export const seedDb = async () => {
 
   // Seed municipalities first (since prices can reference them)
   const stockholm = {
-    id: generateUUID(),
+    id: randomUUID(),
     name: "Stockholm",
     code: "0180",
     country: "Sweden",
   };
   const gothenburg = {
-    id: generateUUID(),
+    id: randomUUID(),
     name: "Göteborg",
     code: "1480",
     country: "Sweden",
   };
 
   const malmo = {
-    id: generateUUID(),
+    id: randomUUID(),
     name: "Malmö",
     code: "1280",
     country: "Sweden",
@@ -64,9 +64,9 @@ export const seedDb = async () => {
   );
 
   // Seed packages with new structure
-  const basicId = generateUUID();
-  const plusId = generateUUID();
-  const premiumId = generateUUID();
+  const basicId = randomUUID();
+  const plusId = randomUUID();
+  const premiumId = randomUUID();
 
   await Package.bulkCreate(
     [
@@ -128,7 +128,7 @@ export const seedDb = async () => {
   await Price.bulkCreate(
     [
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 5000,
         packageId: basic.id,
         currency: "SEK",
@@ -138,7 +138,7 @@ export const seedDb = async () => {
         updatedAt: new Date(),
       },
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 10_000,
         packageId: basic.id,
         currency: "SEK",
@@ -155,7 +155,7 @@ export const seedDb = async () => {
   await Price.bulkCreate(
     [
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 19_990,
         packageId: plus.id,
         currency: "SEK",
@@ -165,7 +165,7 @@ export const seedDb = async () => {
         updatedAt: new Date(),
       },
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 29_900,
         packageId: plus.id,
         currency: "SEK",
@@ -175,7 +175,7 @@ export const seedDb = async () => {
         updatedAt: new Date(),
       },
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 39_900,
         packageId: plus.id,
         currency: "SEK",
@@ -192,7 +192,7 @@ export const seedDb = async () => {
   await Price.bulkCreate(
     [
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 55_000,
         packageId: premium.id,
         currency: "SEK",
@@ -202,7 +202,7 @@ export const seedDb = async () => {
         updatedAt: new Date(),
       },
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 66_600,
         packageId: premium.id,
         currency: "SEK",
@@ -212,7 +212,7 @@ export const seedDb = async () => {
         updatedAt: new Date(),
       },
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 77_700,
         packageId: premium.id,
         currency: "SEK",
@@ -222,7 +222,7 @@ export const seedDb = async () => {
         updatedAt: new Date(),
       },
       {
-        id: generateUUID(),
+        id: randomUUID(),
         priceCents: 88_800,
         packageId: premium.id,
         currency: "SEK",
