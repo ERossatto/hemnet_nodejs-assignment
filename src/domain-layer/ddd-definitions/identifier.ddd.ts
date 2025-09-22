@@ -1,10 +1,10 @@
-import { generateUUID } from "../helpers/uuid.domain-helper";
+import { randomUUID } from "crypto";
 
 export abstract class Identifier {
   protected readonly id: string;
 
   constructor(id?: string) {
-    this.id = id ?? generateUUID();
+    this.id = id ?? randomUUID();
   }
 
   get value(): string {
