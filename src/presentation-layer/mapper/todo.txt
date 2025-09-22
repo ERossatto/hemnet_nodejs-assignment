@@ -1,0 +1,5 @@
+The presentation layer should know about the application layer and how to communicate with it.
+So the mapper in this layer works for this matter
+
+Example
+	- fromRequestDtoToEntity
