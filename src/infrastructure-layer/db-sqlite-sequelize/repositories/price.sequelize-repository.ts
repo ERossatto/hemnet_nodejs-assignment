@@ -8,7 +8,7 @@ import { PriceMapper } from "../mappers/price.infrastructure-mapper";
 import { withOrmErrorTranslation } from "../utils/error-translation";
 
 export class PriceSequelizeRepository implements IPriceRepository {
-  async findByPackageType(packageType: PackageTypeValue): Promise<Price[]> {
+  async findManyByPackageType(packageType: PackageTypeValue): Promise<Price[]> {
     const rows = await PriceModel.findAll({
       include: [
         { model: PackageModel, required: true, where: { type: packageType } },

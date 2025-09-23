@@ -1,4 +1,5 @@
-import { IPackageApplicationService } from "../../application-layer/services/package.application-service";
+import { AddPackagePriceUseCase } from "../../application-layer/use-cases/package/add-package-price.use-case";
+import { CreatePackageWithPriceUseCase } from "../../application-layer/use-cases/package/create-package-with-price.use-case";
 import { PackageTypeValue } from "../../domain-layer";
 import {
   AddPackagePriceRequestDto,
@@ -20,7 +21,8 @@ export interface IPackageController {
 
 export class PackageController implements IPackageController {
   constructor(
-    private readonly packageApplicationService: IPackageApplicationService
+    private readonly addPackagePriceUseCase: AddPackagePriceUseCase,
+    private readonly createPackageWithPriceUseCase: CreatePackageWithPriceUseCase
   ) {}
 
   public async addPackagePrice(
@@ -45,7 +47,7 @@ export class PackageController implements IPackageController {
       );
     }
 
-    const price = await this.packageApplicationService.addPackagePrice({
+    const price = await this.addPackagePriceUseCase.execute({
       packageType: packageType as PackageTypeValue,
       valueCents,
       currency,
@@ -78,7 +80,7 @@ export class PackageController implements IPackageController {
       );
     }
 
-    const price = await this.packageApplicationService.createPackageWithPrice({
+    const price = await this.createPackageWithPriceUseCase.execute({
       packageType: packageType as PackageTypeValue,
       valueCents,
       currency,

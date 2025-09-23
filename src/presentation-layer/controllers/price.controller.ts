@@ -1,4 +1,7 @@
-import { IPriceApplicationService } from "../../application-layer/services/price.application-service";
+import { GetPriceHistoryUseCase } from "../../application-layer/use-cases/price/get-price-history.use-case";
+import { GetCurrentPriceUseCase } from "../../application-layer/use-cases/price/get-current-price.use-case";
+import { GetAllPricesForPackageTypeUseCase } from "../../application-layer/use-cases/price/get-all-prices-for-package-type.use-case";
+import { CreatePriceUseCase } from "../../application-layer/use-cases/price/create-price.use-case";
 import { PackageTypeValue, MunicipalityId } from "../../domain-layer";
 import {
   GetPriceHistoryRequestDto,
@@ -28,7 +31,10 @@ export interface IPriceController {
 
 export class PriceController implements IPriceController {
   constructor(
-    private readonly priceApplicationService: IPriceApplicationService
+    private readonly getPriceHistoryUseCase: GetPriceHistoryUseCase,
+    private readonly getCurrentPriceUseCase: GetCurrentPriceUseCase,
+    private readonly getAllPricesForPackageTypeUseCase: GetAllPricesForPackageTypeUseCase,
+    private readonly createPriceUseCase: CreatePriceUseCase
   ) {}
 
   public async getPriceHistory(
@@ -51,7 +57,7 @@ export class PriceController implements IPriceController {
       ? new MunicipalityId(municipalityId)
       : undefined;
 
-    const pricingPeriods = await this.priceApplicationService.getPriceHistory({
+    const pricingPeriods = await this.getPriceHistoryUseCase.execute({
       packageType: packageType as PackageTypeValue,
       year: yearNum,
       municipalityId: municipalityIdObj,
@@ -75,7 +81,7 @@ export class PriceController implements IPriceController {
       ? new MunicipalityId(municipalityId)
       : undefined;
 
-    const price = await this.priceApplicationService.getCurrentPrice({
+    const price = await this.getCurrentPriceUseCase.execute({
       packageType: packageType as PackageTypeValue,
       municipalityId: municipalityIdObj,
     });
@@ -92,10 +98,9 @@ export class PriceController implements IPriceController {
       throw new BadRequestError("Missing required parameter: packageType");
     }
 
-    const prices =
-      await this.priceApplicationService.getAllPricesForPackageType(
-        packageType as PackageTypeValue
-      );
+    const prices = await this.getAllPricesForPackageTypeUseCase.execute(
+      packageType as PackageTypeValue
+    );
 
     return PriceMapper.toGetAllPricesForPackageTypeResponseDto(prices);
   }
@@ -122,7 +127,7 @@ export class PriceController implements IPriceController {
       );
     }
 
-    const price = await this.priceApplicationService.createPrice({
+    const price = await this.createPriceUseCase.execute({
       packageType: packageType as PackageTypeValue,
       valueCents,
       currency,

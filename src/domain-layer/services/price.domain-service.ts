@@ -9,7 +9,7 @@ import { IMunicipalityRepository } from "../repositories/municipality.domain-int
 import { PackageTypeValue } from "../value-objects/package-type.value-object";
 
 export interface IPriceDomainService {
-  getPriceByPackageType(
+  getCurrentPriceByPackageType(
     packageType: PackageTypeValue,
     municipalityId?: MunicipalityId
   ): Promise<Price | null>;
@@ -29,7 +29,7 @@ export class PriceDomainService implements IPriceDomainService {
     private readonly municipalityRepository: IMunicipalityRepository
   ) {}
 
-  public async getPriceByPackageType(
+  public async getCurrentPriceByPackageType(
     packageType: PackageTypeValue,
     municipalityId?: MunicipalityId
   ): Promise<Price | null> {
@@ -54,7 +54,7 @@ export class PriceDomainService implements IPriceDomainService {
 
     const now = new Date();
     const allPricesForPackage =
-      await this.priceRepository.findByPackageType(packageType);
+      await this.priceRepository.findManyByPackageType(packageType);
 
     const effectivePrices = allPricesForPackage.filter(
       (p) => p.package.id.equals(packageEntity.id) && p.effectiveDate <= now

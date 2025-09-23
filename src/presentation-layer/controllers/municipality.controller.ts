@@ -1,4 +1,5 @@
-import { IMunicipalityApplicationService } from "../../application-layer/services/municipality.application-service";
+import { CreateMunicipalityUseCase } from "../../application-layer/use-cases/municipality/create-municipality.use-case";
+import { GetMunicipalityByNameUseCase } from "../../application-layer/use-cases/municipality/get-municipality-by-name.use-case";
 import {
   CreateMunicipalityRequestDto,
   CreateMunicipalityResponseDto,
@@ -18,7 +19,8 @@ export interface IMunicipalityController {
 
 export class MunicipalityController implements IMunicipalityController {
   constructor(
-    private readonly municipalityApplicationService: IMunicipalityApplicationService
+    private readonly createMunicipalityUseCase: CreateMunicipalityUseCase,
+    private readonly getMunicipalityByNameUseCase: GetMunicipalityByNameUseCase
   ) {}
 
   public async createMunicipality(
@@ -32,12 +34,11 @@ export class MunicipalityController implements IMunicipalityController {
       );
     }
 
-    const municipality =
-      await this.municipalityApplicationService.createMunicipality({
-        name,
-        code,
-        country,
-      });
+    const municipality = await this.createMunicipalityUseCase.execute({
+      name,
+      code,
+      country,
+    });
 
     return MunicipalityMapper.toCreateResponseDto(municipality);
   }
@@ -51,8 +52,7 @@ export class MunicipalityController implements IMunicipalityController {
       throw new BadRequestError("Municipality name is required");
     }
 
-    const municipality =
-      await this.municipalityApplicationService.getMunicipalityByName(name);
+    const municipality = await this.getMunicipalityByNameUseCase.execute(name);
 
     if (!municipality) {
       throw new NotFoundError(`Municipality with name '${name}' not found`);

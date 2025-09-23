@@ -9,7 +9,7 @@
 # Base configuration
 BASE_URL ?= http://localhost:3000
 # Paste a valid JWT here after running `make token.generate`
-TOKEN ?= eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZW1vLXVzZXIiLCJwZXJtaXNzaW9ucyI6WyJtdW5pY2lwYWxpdHk6cmVhZCIsIm11bmljaXBhbGl0eTpjcmVhdGUiLCJwcmljZTpyZWFkIiwicHJpY2U6Y3JlYXRlIiwicGFja2FnZTpjcmVhdGUiXSwianRpIjoiMDllN2QzNTgtOWU3NC00ODg5LWIwYTktODZlMjc1YjhjMDBiIiwiaWF0IjoxNzU4NjQyODc4LCJleHAiOjE3NTg2NDY0Nzh9.BrBIufwg2TTaInhvFZgKT91a0qbpbj2creIk8dcZrnk
+TOKEN ?= paste_token_here
 
 # Common data
 NOW ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")

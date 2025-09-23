@@ -29,7 +29,7 @@ export class PriceHistoryDomainService implements IPriceHistoryDomainService {
     const { packageType, year, municipalityId } = props;
 
     const allPricesForPackage =
-      await this.priceRepository.findByPackageType(packageType);
+      await this.priceRepository.findManyByPackageType(packageType);
 
     const yearRange = DateRange.createRangeForYear(year);
 
