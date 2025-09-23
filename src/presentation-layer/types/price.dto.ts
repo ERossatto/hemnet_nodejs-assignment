@@ -28,6 +28,7 @@ export interface PriceDto {
   effectiveDate: string;
   packageType: string;
   municipalityId?: string;
+  municipalityName?: string;
 }
 
 export interface GetCurrentPriceResponseDto {

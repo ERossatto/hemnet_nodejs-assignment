@@ -11,9 +11,14 @@ import { MunicipalityController } from "../controllers/municipality.controller";
 import { PriceController } from "../controllers/price.controller";
 import { PackageController } from "../controllers/package.controller";
 
-import { MunicipalityApplicationService } from "../../application-layer/services/municipality.application-service";
-import { PriceApplicationService } from "../../application-layer/services/price.application-service";
-import { PackageApplicationService } from "../../application-layer/services/package.application-service";
+import { CreateMunicipalityUseCase } from "../../application-layer/use-cases/municipality/create-municipality.use-case";
+import { GetMunicipalityByNameUseCase } from "../../application-layer/use-cases/municipality/get-municipality-by-name.use-case";
+import { GetPriceHistoryUseCase } from "../../application-layer/use-cases/price/get-price-history.use-case";
+import { GetCurrentPriceUseCase } from "../../application-layer/use-cases/price/get-current-price.use-case";
+import { GetAllPricesForPackageTypeUseCase } from "../../application-layer/use-cases/price/get-all-prices-for-package-type.use-case";
+import { CreatePriceUseCase } from "../../application-layer/use-cases/price/create-price.use-case";
+import { AddPackagePriceUseCase } from "../../application-layer/use-cases/package/add-package-price.use-case";
+import { CreatePackageWithPriceUseCase } from "../../application-layer/use-cases/package/create-package-with-price.use-case";
 
 import { PriceDomainService } from "../../domain-layer/services/price.domain-service";
 import { PriceHistoryDomainService } from "../../domain-layer/services/price-history.domain-service";
@@ -22,6 +27,7 @@ import { PackageDomainService } from "../../domain-layer/services/package.domain
 import { MunicipalitySequelizeRepository } from "../../infrastructure-layer/db-sqlite-sequelize/repositories/municipality.sequelize-repository";
 import { PriceSequelizeRepository } from "../../infrastructure-layer/db-sqlite-sequelize/repositories/price.sequelize-repository";
 import { PackageSequelizeRepository } from "../../infrastructure-layer/db-sqlite-sequelize/repositories/package.sequelize-repository";
+import { MunicipalityDomainService } from "../../domain-layer/services/municipality.domain-service";
 
 /**
  * Factory class to create controllers with proper dependency injection
@@ -40,14 +46,23 @@ export class ControllerFactory {
       // Infrastructure layer
       const municipalityRepository = new MunicipalitySequelizeRepository();
 
-      // Application layer
-      const municipalityApplicationService = new MunicipalityApplicationService(
+      // domain layer
+      const municipalityDomainService = new MunicipalityDomainService(
         municipalityRepository
+      );
+
+      // Application layer (use-cases)
+      const createMunicipality = new CreateMunicipalityUseCase(
+        municipalityDomainService
+      );
+      const getMunicipalityByName = new GetMunicipalityByNameUseCase(
+        municipalityDomainService
       );
 
       // Presentation layer
       this.municipalityController = new MunicipalityController(
-        municipalityApplicationService
+        createMunicipality,
+        getMunicipalityByName
       );
     }
 
@@ -75,16 +90,23 @@ export class ControllerFactory {
         municipalityRepository
       );
 
-      // Application layer
-      const priceApplicationService = new PriceApplicationService(
-        priceRepository,
-        priceHistoryDomainService,
-        priceDomainService,
-        municipalityRepository
+      // Application layer (use-cases)
+      const getPriceHistory = new GetPriceHistoryUseCase(
+        priceHistoryDomainService
+      );
+      const getCurrentPrice = new GetCurrentPriceUseCase(priceDomainService);
+      const createPrice = new CreatePriceUseCase(priceDomainService);
+      const getAllPricesForPackageType = new GetAllPricesForPackageTypeUseCase(
+        priceRepository
       );
 
       // Presentation layer
-      this.priceController = new PriceController(priceApplicationService);
+      this.priceController = new PriceController(
+        getPriceHistory,
+        getCurrentPrice,
+        getAllPricesForPackageType,
+        createPrice
+      );
     }
 
     return this.priceController;
@@ -112,22 +134,22 @@ export class ControllerFactory {
         municipalityRepository
       );
 
-      // Application layer services
-      const priceApplicationService = new PriceApplicationService(
-        priceRepository,
-        priceHistoryDomainService,
-        priceDomainService,
-        municipalityRepository
+      // Application layer (use-cases)
+      const addPackagePrice = new AddPackagePriceUseCase(
+        packageRepository,
+        priceDomainService
       );
 
-      const packageApplicationService = new PackageApplicationService(
-        packageRepository,
+      const createPackageWithPrice = new CreatePackageWithPriceUseCase(
         packageDomainService,
-        priceApplicationService
+        priceDomainService
       );
 
       // Presentation layer
-      this.packageController = new PackageController(packageApplicationService);
+      this.packageController = new PackageController(
+        addPackagePrice,
+        createPackageWithPrice
+      );
     }
 
     return this.packageController;

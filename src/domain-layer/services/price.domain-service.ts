@@ -7,9 +7,10 @@ import { IPackageRepository } from "../repositories/package.domain-interface-rep
 import { Municipality } from "../entities/municipality.entity";
 import { IMunicipalityRepository } from "../repositories/municipality.domain-interface-repository";
 import { PackageTypeValue } from "../value-objects/package-type.value-object";
+import { MunicipalityName } from "../value-objects/municipality-name.value-object";
 
 export interface IPriceDomainService {
-  getPriceByPackageType(
+  getCurrentPriceByPackageType(
     packageType: PackageTypeValue,
     municipalityId?: MunicipalityId
   ): Promise<Price | null>;
@@ -18,7 +19,7 @@ export interface IPriceDomainService {
     valueCents: ValueCents;
     currency: Currency;
     effectiveDate: Date;
-    municipalityId?: MunicipalityId;
+    municipalityName?: MunicipalityName;
   }): Promise<Price>;
 }
 
@@ -29,7 +30,7 @@ export class PriceDomainService implements IPriceDomainService {
     private readonly municipalityRepository: IMunicipalityRepository
   ) {}
 
-  public async getPriceByPackageType(
+  public async getCurrentPriceByPackageType(
     packageType: PackageTypeValue,
     municipalityId?: MunicipalityId
   ): Promise<Price | null> {
@@ -54,7 +55,7 @@ export class PriceDomainService implements IPriceDomainService {
 
     const now = new Date();
     const allPricesForPackage =
-      await this.priceRepository.findByPackageType(packageType);
+      await this.priceRepository.findManyByPackageType(packageType);
 
     const effectivePrices = allPricesForPackage.filter(
       (p) => p.package.id.equals(packageEntity.id) && p.effectiveDate <= now
@@ -82,7 +83,7 @@ export class PriceDomainService implements IPriceDomainService {
     valueCents: ValueCents;
     currency: Currency;
     effectiveDate: Date;
-    municipalityId?: MunicipalityId;
+    municipalityName?: MunicipalityName;
   }): Promise<Price> {
     const packageEntity = await this.packageRepository.findByPackageType(
       props.packageType
@@ -94,14 +95,14 @@ export class PriceDomainService implements IPriceDomainService {
 
     let municipality: Municipality | undefined = undefined;
 
-    if (props.municipalityId) {
-      const foundMunicipality = await this.municipalityRepository.findById(
-        props.municipalityId
+    if (props.municipalityName) {
+      const foundMunicipality = await this.municipalityRepository.findByName(
+        props.municipalityName
       );
 
       if (!foundMunicipality) {
         throw new Error(
-          `Municipality with id ${props.municipalityId.value} not found`
+          `Municipality with name ${props.municipalityName.value} not found`
         );
       }
 
