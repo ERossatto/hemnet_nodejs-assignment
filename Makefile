@@ -9,7 +9,7 @@
 # Base configuration
 BASE_URL ?= http://localhost:3000
 # Paste a valid JWT here after running `make token.generate`
-TOKEN ?= paste_jwt_here
+TOKEN ?= eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZW1vLXVzZXIiLCJwZXJtaXNzaW9ucyI6WyJtdW5pY2lwYWxpdHk6cmVhZCIsIm11bmljaXBhbGl0eTpjcmVhdGUiLCJwcmljZTpyZWFkIiwicHJpY2U6Y3JlYXRlIiwicGFja2FnZTpjcmVhdGUiXSwianRpIjoiMDllN2QzNTgtOWU3NC00ODg5LWIwYTktODZlMjc1YjhjMDBiIiwiaWF0IjoxNzU4NjQyODc4LCJleHAiOjE3NTg2NDY0Nzh9.BrBIufwg2TTaInhvFZgKT91a0qbpbj2creIk8dcZrnk
 
 # Common data
 NOW ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -40,7 +40,6 @@ CODE ?= 0180
 COUNTRY ?= Sweden
 
 municipalities.create:
-	@test "$(TOKEN)" != "" -a "$(TOKEN)" != "PASTE_JWT_HERE" || (echo "Set TOKEN in Makefile (run: make token.generate)" && exit 1)
 	@echo "POST /api/municipalities"
 	curl -sS -X POST "$(BASE_URL)/api/municipalities" \
 	  -H "Authorization: Bearer $(TOKEN)" \
@@ -48,13 +47,12 @@ municipalities.create:
 	  -d '{"name":"$(NAME)","code":"$(CODE)","country":"$(COUNTRY)"}'
 
 municipalities.get:
-	@test "$(TOKEN)" != "" -a "$(TOKEN)" != "PASTE_JWT_HERE" || (echo "Set TOKEN in Makefile (run: make token.generate)" && exit 1)
 	@echo "GET /api/municipalities/$(NAME)"
 	curl -sS "$(BASE_URL)/api/municipalities/$(NAME)" \
 	  -H "Authorization: Bearer $(TOKEN)"
 
 # -------------------- Prices --------------------
-PKG_TYPE ?= basic
+PKG_TYPE ?= Basic
 VALUE_CENTS ?= 9900
 CURRENCY ?= SEK
 EFFECTIVE_DATE ?= $(NOW)
@@ -63,7 +61,6 @@ MUNICIPALITY_ID ?=
 YEAR ?= $(shell date -u +"%Y")
 
 prices.create:
-	@test "$(TOKEN)" != "" -a "$(TOKEN)" != "PASTE_JWT_HERE" || (echo "Set TOKEN in Makefile (run: make token.generate)" && exit 1)
 	@echo "POST /api/prices"
 	curl -sS -X POST "$(BASE_URL)/api/prices" \
 	  -H "Authorization: Bearer $(TOKEN)" \
@@ -71,26 +68,22 @@ prices.create:
 	  -d '{"packageType":"$(PKG_TYPE)","valueCents":$(VALUE_CENTS),"currency":"$(CURRENCY)","effectiveDate":"$(EFFECTIVE_DATE)","municipalityName":"$(MUNICIPALITY_NAME)"}'
 
 prices.history:
-	@test "$(TOKEN)" != "" -a "$(TOKEN)" != "PASTE_JWT_HERE" || (echo "Set TOKEN in Makefile (run: make token.generate)" && exit 1)
 	@echo "GET /api/prices/history?packageType=$(PKG_TYPE)&year=$(YEAR)$(if $(MUNICIPALITY_ID),&municipalityId=$(MUNICIPALITY_ID),)"
 	curl -sS "$(BASE_URL)/api/prices/history?packageType=$(PKG_TYPE)&year=$(YEAR)$(if $(MUNICIPALITY_ID),&municipalityId=$(MUNICIPALITY_ID),)" \
 	  -H "Authorization: Bearer $(TOKEN)"
 
 prices.current:
-	@test "$(TOKEN)" != "" -a "$(TOKEN)" != "PASTE_JWT_HERE" || (echo "Set TOKEN in Makefile (run: make token.generate)" && exit 1)
 	@echo "GET /api/prices/current?packageType=$(PKG_TYPE)$(if $(MUNICIPALITY_ID),&municipalityId=$(MUNICIPALITY_ID),)"
 	curl -sS "$(BASE_URL)/api/prices/current?packageType=$(PKG_TYPE)$(if $(MUNICIPALITY_ID),&municipalityId=$(MUNICIPALITY_ID),)" \
 	  -H "Authorization: Bearer $(TOKEN)"
 
 prices.by_package:
-	@test "$(TOKEN)" != "" -a "$(TOKEN)" != "PASTE_JWT_HERE" || (echo "Set TOKEN in Makefile (run: make token.generate)" && exit 1)
 	@echo "GET /api/prices/package/$(PKG_TYPE)"
 	curl -sS "$(BASE_URL)/api/prices/package/$(PKG_TYPE)" \
 	  -H "Authorization: Bearer $(TOKEN)"
 
 # -------------------- Packages --------------------
 packages.create:
-	@test "$(TOKEN)" != "" -a "$(TOKEN)" != "PASTE_JWT_HERE" || (echo "Set TOKEN in Makefile (run: make token.generate)" && exit 1)
 	@echo "POST /api/packages"
 	curl -sS -X POST "$(BASE_URL)/api/packages" \
 	  -H "Authorization: Bearer $(TOKEN)" \
@@ -98,7 +91,6 @@ packages.create:
 	  -d '{"packageType":"$(PKG_TYPE)","valueCents":$(VALUE_CENTS),"currency":"$(CURRENCY)","effectiveDate":"$(EFFECTIVE_DATE)","municipalityName":"$(MUNICIPALITY_NAME)"}'
 
 packages.add_price:
-	@test "$(TOKEN)" != "" -a "$(TOKEN)" != "PASTE_JWT_HERE" || (echo "Set TOKEN in Makefile (run: make token.generate)" && exit 1)
 	@echo "POST /api/packages/$(PKG_TYPE)/price"
 	curl -sS -X POST "$(BASE_URL)/api/packages/$(PKG_TYPE)/price" \
 	  -H "Authorization: Bearer $(TOKEN)" \
