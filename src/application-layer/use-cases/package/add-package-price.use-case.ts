@@ -3,11 +3,9 @@ import {
   PackageTypeValue,
   Price,
   IPriceDomainService,
-  IMunicipalityRepository,
   ValueCents,
   Currency,
   MunicipalityName,
-  MunicipalityId,
 } from "../../../domain-layer";
 import { UseCase } from "../contracts";
 
@@ -24,8 +22,7 @@ export class AddPackagePriceUseCase
 {
   constructor(
     private readonly packageRepository: IPackageRepository,
-    private readonly priceDomainService: IPriceDomainService,
-    private readonly municipalityRepository: IMunicipalityRepository
+    private readonly priceDomainService: IPriceDomainService
   ) {}
 
   async execute(input: AddPackagePriceInput): Promise<Price> {
@@ -41,24 +38,16 @@ export class AddPackagePriceUseCase
     const currency = Currency.create(input.currency);
     const effectiveDate = new Date(input.effectiveDate);
 
-    let municipalityId: MunicipalityId | undefined = undefined;
-    if (input.municipalityName) {
-      const name = MunicipalityName.create(input.municipalityName);
-      const municipality = await this.municipalityRepository.findByName(name);
-      if (!municipality) {
-        throw new Error(
-          `Municipality with name ${input.municipalityName} not found`
-        );
-      }
-      municipalityId = municipality.id;
-    }
+    const municipalityName = input.municipalityName
+      ? MunicipalityName.create(input.municipalityName)
+      : undefined;
 
     return await this.priceDomainService.createPriceForPackageType({
       packageType: input.packageType,
       valueCents,
       currency,
       effectiveDate,
-      municipalityId,
+      municipalityName,
     });
   }
 }

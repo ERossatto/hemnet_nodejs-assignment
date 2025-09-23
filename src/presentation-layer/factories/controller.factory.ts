@@ -95,10 +95,7 @@ export class ControllerFactory {
         priceHistoryDomainService
       );
       const getCurrentPrice = new GetCurrentPriceUseCase(priceDomainService);
-      const createPrice = new CreatePriceUseCase(
-        priceDomainService,
-        municipalityRepository
-      );
+      const createPrice = new CreatePriceUseCase(priceDomainService);
       const getAllPricesForPackageType = new GetAllPricesForPackageTypeUseCase(
         priceRepository
       );
@@ -140,14 +137,12 @@ export class ControllerFactory {
       // Application layer (use-cases)
       const addPackagePrice = new AddPackagePriceUseCase(
         packageRepository,
-        priceDomainService,
-        municipalityRepository
+        priceDomainService
       );
 
       const createPackageWithPrice = new CreatePackageWithPriceUseCase(
         packageDomainService,
-        priceDomainService,
-        municipalityRepository
+        priceDomainService
       );
 
       // Presentation layer

@@ -46,8 +46,7 @@ describe("Package Use-Cases", () => {
     // Setup application use-cases
     addPackagePrice = new AddPackagePriceUseCase(
       packageRepository,
-      priceDomainService,
-      municipalityRepository
+      priceDomainService
     );
 
     getCurrentPrice = new GetCurrentPriceUseCase(priceDomainService);

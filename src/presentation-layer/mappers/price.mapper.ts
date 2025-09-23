@@ -26,6 +26,7 @@ export class PriceMapper {
       effectiveDate: price.effectiveDate.toISOString(),
       packageType: price.package.type.value,
       municipalityId: price.municipality?.id.value,
+      municipalityName: price.municipality?.name.value,
     };
   }
 
