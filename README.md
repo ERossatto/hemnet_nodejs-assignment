@@ -14,16 +14,7 @@ So all the IT descriptions are there as they were before.
 I also kept the original implementation commented out.
 But I had to adapt the calls to work with the new implementation of the assignment.
 
-- **PASS** src/application-layer/services/tests/price.spec.ts
-- PriceService
-- ✅ Returns the pricing history for the provided year and package (62 ms)
-- ✅ Supports filtering on municipality (23 ms)
-
-- **PASS** src/application-layer/services/tests/package.spec.ts
-- PackageService
-- ✅ Updates the current price of the provided package (35 ms)
-- ✅ Stores the old price of the provided package in its price history (16 ms)
-- ✅ Supports adding a price for a specific municipality (16 ms)
+![test passing](./imgs/tests-print.jpeg)
 
 # Concepts I did use in this assignment
 
@@ -62,8 +53,8 @@ Normally I would not suffix the layers with the word "layer". But I did for quic
 - infrastructure layer
 
 With this layering the goal was to keep everything related to the Express framework in the **presentation layer**.
-Even though I did not have the time to work in this layer as well 😬
 Every request and response communication concern between server and client will be taken care of in this layer.
+As well as error-handling (to split context of server errors to client errors), authorization and permissions.
 
 So all the use case logic handling will be at **application layer**.
 This layer works as an orchestrator between the other layers here.
@@ -92,7 +83,7 @@ The win is simple: I can swap SQLite for something else, or plug in test doubles
 It also keeps the domain pure (no ORM types sneaking in), and all the wiring would live at the edges (controllers).
 In short: fewer surprises, easier testing, and freedom to change infra later without a big refactor.
 
-![simplified clean architecture](./clean_architecture.png)
+![simplified clean architecture](./imgs/clean_architecture.png)
 
 ## SOLID
 
