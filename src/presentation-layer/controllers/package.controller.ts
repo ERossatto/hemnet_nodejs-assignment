@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import { IPackageApplicationService } from "../../application-layer/services/package.application-service";
 import { PackageTypeValue } from "../../domain-layer";
 import {
@@ -12,13 +11,11 @@ import { BadRequestError } from "../errors/http-errors";
 
 export interface IPackageController {
   addPackagePrice(
-    req: Request<{}, AddPackagePriceResponseDto, AddPackagePriceRequestDto>,
-    res: Response<AddPackagePriceResponseDto>
-  ): Promise<void>;
+    req: AddPackagePriceRequestDto
+  ): Promise<AddPackagePriceResponseDto>;
   createPackage(
-    req: Request<{}, CreatePackageResponseDto, CreatePackageRequestDto>,
-    res: Response<CreatePackageResponseDto>
-  ): Promise<void>;
+    req: CreatePackageRequestDto
+  ): Promise<CreatePackageResponseDto>;
 }
 
 export class PackageController implements IPackageController {
@@ -27,16 +24,15 @@ export class PackageController implements IPackageController {
   ) {}
 
   public async addPackagePrice(
-    req: Request<{}, AddPackagePriceResponseDto, AddPackagePriceRequestDto>,
-    res: Response<AddPackagePriceResponseDto>
-  ): Promise<void> {
+    req: AddPackagePriceRequestDto
+  ): Promise<AddPackagePriceResponseDto> {
     const {
       packageType,
       valueCents,
       currency,
       effectiveDate,
       municipalityName,
-    } = req.body;
+    } = req;
 
     if (
       !packageType ||
@@ -57,22 +53,19 @@ export class PackageController implements IPackageController {
       municipalityName,
     });
 
-    const responseDto = PackageMapper.toAddPackagePriceResponseDto(price);
-
-    res.status(201).json(responseDto);
+    return PackageMapper.toAddPackagePriceResponseDto(price);
   }
 
   public async createPackage(
-    req: Request<{}, CreatePackageResponseDto, CreatePackageRequestDto>,
-    res: Response<CreatePackageResponseDto>
-  ): Promise<void> {
+    req: CreatePackageRequestDto
+  ): Promise<CreatePackageResponseDto> {
     const {
       packageType,
       valueCents,
       currency,
       effectiveDate,
       municipalityName,
-    } = req.body;
+    } = req;
 
     if (
       !packageType ||
@@ -93,8 +86,6 @@ export class PackageController implements IPackageController {
       municipalityName,
     });
 
-    const responseDto = PackageMapper.toCreatePackageResponseDto(price);
-
-    res.status(201).json(responseDto);
+    return PackageMapper.toCreatePackageResponseDto(price);
   }
 }

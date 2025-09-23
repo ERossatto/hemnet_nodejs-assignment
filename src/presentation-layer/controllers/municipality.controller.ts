@@ -26,14 +26,12 @@ export class MunicipalityController implements IMunicipalityController {
   ): Promise<CreateMunicipalityResponseDto> {
     const { name, code, country } = req;
 
-    // Input validation (presentation layer responsibility)
     if (!name || !code || !country) {
       throw new BadRequestError(
         "Missing required fields: name, code, and country are required"
       );
     }
 
-    // Delegate to application service (proper Clean Architecture)
     const municipality =
       await this.municipalityApplicationService.createMunicipality({
         name,
@@ -41,7 +39,6 @@ export class MunicipalityController implements IMunicipalityController {
         country,
       });
 
-    // Map domain entity to response DTO using mapper (presentation layer responsibility)
     return MunicipalityMapper.toCreateResponseDto(municipality);
   }
 
@@ -61,7 +58,6 @@ export class MunicipalityController implements IMunicipalityController {
       throw new NotFoundError(`Municipality with name '${name}' not found`);
     }
 
-    // Map domain entity to response DTO using mapper
     return MunicipalityMapper.toGetByNameResponseDto(municipality);
   }
 }

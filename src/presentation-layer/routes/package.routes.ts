@@ -16,7 +16,8 @@ router.post(
   permit("price:create"),
   asyncHandler(async (req, res) => {
     const packageController = ControllerFactory.createPackageController();
-    await packageController.addPackagePrice(req, res);
+    const result = await packageController.addPackagePrice(req.body);
+    res.status(201).json(result);
   })
 );
 
@@ -30,7 +31,8 @@ router.post(
   permit("package:create"),
   asyncHandler(async (req, res) => {
     const packageController = ControllerFactory.createPackageController();
-    await packageController.createPackage(req, res);
+    const result = await packageController.createPackage(req.body);
+    res.status(201).json(result);
   })
 );
 

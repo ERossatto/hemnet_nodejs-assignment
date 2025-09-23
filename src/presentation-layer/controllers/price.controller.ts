@@ -1,9 +1,11 @@
-import { Request, Response } from "express";
 import { IPriceApplicationService } from "../../application-layer/services/price.application-service";
 import { PackageTypeValue, MunicipalityId } from "../../domain-layer";
 import {
+  GetPriceHistoryRequestDto,
   GetPriceHistoryResponseDto,
+  GetCurrentPriceRequestDto,
   GetCurrentPriceResponseDto,
+  GetAllPricesForPackageTypeRequestDto,
   GetAllPricesForPackageTypeResponseDto,
   CreatePriceRequestDto,
   CreatePriceResponseDto,
@@ -13,21 +15,15 @@ import { BadRequestError } from "../errors/http-errors";
 
 export interface IPriceController {
   getPriceHistory(
-    req: Request,
-    res: Response<GetPriceHistoryResponseDto>
-  ): Promise<void>;
+    req: GetPriceHistoryRequestDto
+  ): Promise<GetPriceHistoryResponseDto>;
   getCurrentPrice(
-    req: Request,
-    res: Response<GetCurrentPriceResponseDto>
-  ): Promise<void>;
+    req: GetCurrentPriceRequestDto
+  ): Promise<GetCurrentPriceResponseDto>;
   getAllPricesForPackageType(
-    req: Request,
-    res: Response<GetAllPricesForPackageTypeResponseDto>
-  ): Promise<void>;
-  createPrice(
-    req: Request<{}, CreatePriceResponseDto, CreatePriceRequestDto>,
-    res: Response<CreatePriceResponseDto>
-  ): Promise<void>;
+    req: GetAllPricesForPackageTypeRequestDto
+  ): Promise<GetAllPricesForPackageTypeResponseDto>;
+  createPrice(req: CreatePriceRequestDto): Promise<CreatePriceResponseDto>;
 }
 
 export class PriceController implements IPriceController {
@@ -36,10 +32,9 @@ export class PriceController implements IPriceController {
   ) {}
 
   public async getPriceHistory(
-    req: Request,
-    res: Response<GetPriceHistoryResponseDto>
-  ): Promise<void> {
-    const { packageType, year, municipalityId } = req.query as any;
+    req: GetPriceHistoryRequestDto
+  ): Promise<GetPriceHistoryResponseDto> {
+    const { packageType, year, municipalityId } = req;
 
     if (!packageType || !year) {
       throw new BadRequestError(
@@ -47,13 +42,13 @@ export class PriceController implements IPriceController {
       );
     }
 
-    const yearNum = parseInt(year as string, 10);
+    const yearNum = parseInt(String(year), 10);
     if (isNaN(yearNum)) {
       throw new BadRequestError("Year must be a valid number");
     }
 
     const municipalityIdObj = municipalityId
-      ? new MunicipalityId(municipalityId as string)
+      ? new MunicipalityId(municipalityId)
       : undefined;
 
     const pricingPeriods = await this.priceApplicationService.getPriceHistory({
@@ -62,17 +57,13 @@ export class PriceController implements IPriceController {
       municipalityId: municipalityIdObj,
     });
 
-    const responseDto =
-      PriceMapper.toGetPriceHistoryResponseDto(pricingPeriods);
-
-    res.status(200).json(responseDto);
+    return PriceMapper.toGetPriceHistoryResponseDto(pricingPeriods);
   }
 
   public async getCurrentPrice(
-    req: Request,
-    res: Response<GetCurrentPriceResponseDto>
-  ): Promise<void> {
-    const { packageType, municipalityId } = req.query as any;
+    req: GetCurrentPriceRequestDto
+  ): Promise<GetCurrentPriceResponseDto> {
+    const { packageType, municipalityId } = req;
 
     if (!packageType) {
       throw new BadRequestError(
@@ -81,7 +72,7 @@ export class PriceController implements IPriceController {
     }
 
     const municipalityIdObj = municipalityId
-      ? new MunicipalityId(municipalityId as string)
+      ? new MunicipalityId(municipalityId)
       : undefined;
 
     const price = await this.priceApplicationService.getCurrentPrice({
@@ -89,16 +80,13 @@ export class PriceController implements IPriceController {
       municipalityId: municipalityIdObj,
     });
 
-    const responseDto = PriceMapper.toGetCurrentPriceResponseDto(price);
-
-    res.status(200).json(responseDto);
+    return PriceMapper.toGetCurrentPriceResponseDto(price);
   }
 
   public async getAllPricesForPackageType(
-    req: Request,
-    res: Response<GetAllPricesForPackageTypeResponseDto>
-  ): Promise<void> {
-    const { packageType } = req.params;
+    req: GetAllPricesForPackageTypeRequestDto
+  ): Promise<GetAllPricesForPackageTypeResponseDto> {
+    const { packageType } = req;
 
     if (!packageType) {
       throw new BadRequestError("Missing required parameter: packageType");
@@ -109,23 +97,19 @@ export class PriceController implements IPriceController {
         packageType as PackageTypeValue
       );
 
-    const responseDto =
-      PriceMapper.toGetAllPricesForPackageTypeResponseDto(prices);
-
-    res.status(200).json(responseDto);
+    return PriceMapper.toGetAllPricesForPackageTypeResponseDto(prices);
   }
 
   public async createPrice(
-    req: Request<{}, CreatePriceResponseDto, CreatePriceRequestDto>,
-    res: Response<CreatePriceResponseDto>
-  ): Promise<void> {
+    req: CreatePriceRequestDto
+  ): Promise<CreatePriceResponseDto> {
     const {
       packageType,
       valueCents,
       currency,
       effectiveDate,
       municipalityName,
-    } = req.body;
+    } = req;
 
     if (
       !packageType ||
@@ -146,8 +130,6 @@ export class PriceController implements IPriceController {
       municipalityName,
     });
 
-    const responseDto = PriceMapper.toCreatePriceResponseDto(price);
-
-    res.status(201).json(responseDto);
+    return PriceMapper.toCreatePriceResponseDto(price);
   }
 }

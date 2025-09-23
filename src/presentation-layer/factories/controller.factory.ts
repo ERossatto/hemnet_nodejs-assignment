@@ -1,10 +1,8 @@
 /**
  * Controller Factory - Demonstrates proper dependency injection setup
  *
- * In a real application, you would use a proper DI container like:
+ * In a real application, I would use a proper DI container like:
  * - inversify
- * - awilix
- * - typedi
  *
  * This factory shows how controllers should be instantiated with their dependencies
  */

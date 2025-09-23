@@ -16,7 +16,14 @@ router.get(
   permit("price:read"),
   asyncHandler(async (req, res) => {
     const priceController = ControllerFactory.createPriceController();
-    await priceController.getPriceHistory(req, res);
+    const result = await priceController.getPriceHistory({
+      packageType: String(req.query.packageType),
+      year: Number(req.query.year),
+      municipalityId: req.query.municipalityId
+        ? String(req.query.municipalityId)
+        : undefined,
+    });
+    res.status(200).json(result);
   })
 );
 
@@ -30,7 +37,13 @@ router.get(
   permit("price:read"),
   asyncHandler(async (req, res) => {
     const priceController = ControllerFactory.createPriceController();
-    await priceController.getCurrentPrice(req, res);
+    const result = await priceController.getCurrentPrice({
+      packageType: String(req.query.packageType),
+      municipalityId: req.query.municipalityId
+        ? String(req.query.municipalityId)
+        : undefined,
+    });
+    res.status(200).json(result);
   })
 );
 
@@ -44,7 +57,10 @@ router.get(
   permit("price:read"),
   asyncHandler(async (req, res) => {
     const priceController = ControllerFactory.createPriceController();
-    await priceController.getAllPricesForPackageType(req, res);
+    const result = await priceController.getAllPricesForPackageType({
+      packageType: req.params.packageType,
+    });
+    res.status(200).json(result);
   })
 );
 
@@ -58,7 +74,8 @@ router.post(
   permit("price:create"),
   asyncHandler(async (req, res) => {
     const priceController = ControllerFactory.createPriceController();
-    await priceController.createPrice(req, res);
+    const result = await priceController.createPrice(req.body);
+    res.status(201).json(result);
   })
 );
 
