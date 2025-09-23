@@ -10,7 +10,7 @@ import {
 
 export interface IPackageApplicationService {
   addPackagePrice(props: PriceCreationProps): Promise<Price>;
-  createPackage(props: PriceCreationProps): Promise<Price>;
+  createPackageWithPrice(props: PriceCreationProps): Promise<Price>;
 }
 
 export class PackageApplicationService implements IPackageApplicationService {
@@ -36,7 +36,7 @@ export class PackageApplicationService implements IPackageApplicationService {
     return newPrice;
   }
 
-  async createPackage(props: PriceCreationProps): Promise<Price> {
+  async createPackageWithPrice(props: PriceCreationProps): Promise<Price> {
     await this.packageDomainService.createPackageByType(props.packageType);
 
     const newPrice = await this.priceApplicationService.createPrice({

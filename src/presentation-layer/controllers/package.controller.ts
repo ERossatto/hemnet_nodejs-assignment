@@ -78,7 +78,7 @@ export class PackageController implements IPackageController {
       );
     }
 
-    const price = await this.packageApplicationService.createPackage({
+    const price = await this.packageApplicationService.createPackageWithPrice({
       packageType: packageType as PackageTypeValue,
       valueCents,
       currency,

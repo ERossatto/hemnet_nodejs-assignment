@@ -22,6 +22,7 @@ import { PackageDomainService } from "../../domain-layer/services/package.domain
 import { MunicipalitySequelizeRepository } from "../../infrastructure-layer/db-sqlite-sequelize/repositories/municipality.sequelize-repository";
 import { PriceSequelizeRepository } from "../../infrastructure-layer/db-sqlite-sequelize/repositories/price.sequelize-repository";
 import { PackageSequelizeRepository } from "../../infrastructure-layer/db-sqlite-sequelize/repositories/package.sequelize-repository";
+import { MunicipalityDomainService } from "../../domain-layer/services/municipality.domain-service";
 
 /**
  * Factory class to create controllers with proper dependency injection
@@ -40,9 +41,14 @@ export class ControllerFactory {
       // Infrastructure layer
       const municipalityRepository = new MunicipalitySequelizeRepository();
 
+      // domain layer
+      const municipalityDomainService = new MunicipalityDomainService(
+        municipalityRepository
+      );
+
       // Application layer
       const municipalityApplicationService = new MunicipalityApplicationService(
-        municipalityRepository
+        municipalityDomainService
       );
 
       // Presentation layer

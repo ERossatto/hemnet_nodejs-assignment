@@ -12,6 +12,7 @@ import {
   PriceHistoryDomainService,
 } from "../../../domain-layer";
 import { PACKAGE_TYPES } from "../../../domain-layer/value-objects/package-type.value-object";
+import { MunicipalityDomainService } from "../../../domain-layer/services/municipality.domain-service";
 
 describe("PriceService", () => {
   // Set the db object to a variable which can be accessed throughout the whole test file
@@ -42,6 +43,9 @@ describe("PriceService", () => {
     const priceHistoryDomainService = new PriceHistoryDomainService(
       priceRepository
     );
+    const municipalityDomainService = new MunicipalityDomainService(
+      municipalityRepository
+    );
 
     // Setup application services
     priceService = new PriceApplicationService(
@@ -58,7 +62,7 @@ describe("PriceService", () => {
     );
 
     municipalityService = new MunicipalityApplicationService(
-      municipalityRepository
+      municipalityDomainService
     );
   });
 

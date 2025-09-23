@@ -1,10 +1,10 @@
 import {
-  IMunicipalityRepository,
-  Municipality,
-  MunicipalityName,
-  MunicipalityCode,
   CountryName,
+  Municipality,
+  MunicipalityCode,
+  MunicipalityName,
 } from "../../domain-layer";
+import { IMunicipalityDomainService } from "../../domain-layer/services/municipality.domain-service";
 
 export interface IMunicipalityApplicationService {
   createMunicipality(props: {
@@ -19,7 +19,7 @@ export class MunicipalityApplicationService
   implements IMunicipalityApplicationService
 {
   constructor(
-    private readonly municipalityRepository: IMunicipalityRepository
+    private readonly municipalityDomainService: IMunicipalityDomainService
   ) {}
 
   async createMunicipality(props: {
@@ -29,26 +29,18 @@ export class MunicipalityApplicationService
   }): Promise<Municipality> {
     const { name, code, country } = props;
 
-    // Create value objects (domain layer responsibility)
     const municipalityName = MunicipalityName.create(name);
     const municipalityCode = MunicipalityCode.create(code);
     const countryName = CountryName.create(country);
 
-    // Create municipality entity (domain layer responsibility)
-    const municipality = Municipality.create({
+    return await this.municipalityDomainService.createMunicipality({
       name: municipalityName,
       code: municipalityCode,
       country: countryName,
     });
-
-    // Persist via repository (infrastructure layer)
-    await this.municipalityRepository.save(municipality);
-
-    return municipality;
   }
 
   async getMunicipalityByName(name: string): Promise<Municipality | null> {
-    const municipalityName = MunicipalityName.create(name);
-    return await this.municipalityRepository.findByName(municipalityName);
+    return await this.municipalityDomainService.getMunicipalityByName(name);
   }
 }
