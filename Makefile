@@ -9,10 +9,18 @@
 # Base configuration
 BASE_URL ?= http://localhost:3000
 # Paste a valid JWT here after running `make token.generate`
-TOKEN ?= paste_token_here
+TOKEN ?= eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZW1vLXVzZXIiLCJwZXJtaXNzaW9ucyI6WyJtdW5pY2lwYWxpdHk6cmVhZCIsIm11bmljaXBhbGl0eTpjcmVhdGUiLCJwcmljZTpyZWFkIiwicHJpY2U6Y3JlYXRlIiwicGFja2FnZTpjcmVhdGUiXSwianRpIjoiNTk4NWFkOGQtMTc0Ny00YWY5LWI3M2ItMGQ2YmYyYmI0MGFkIiwiaWF0IjoxNzU4NjYwMjQyLCJleHAiOjE3NTg2NjM4NDJ9.In1YH16HGCHtQy4a1w09UDOVvsPDBe-pYL6oLrUG_Hs
 
 # Common data
-NOW ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+NOW_DATE ?= 2025-09-23
+MUNICIPALITY_NAME ?= Santos
+MUNICIPALITY_CODE ?= 0013
+MUNICIPALITY_COUNTRY ?= Brazil
+PACKAGE_TYPE ?= Basic
+VALUE_CENTS ?= 1000
+CURRENCY ?= BRL
+EFFECTIVE_DATE ?= $(NOW_DATE)
+YEAR ?= 2025
 
 help:
 	@echo "Available targets:"
@@ -35,51 +43,43 @@ token.generate:
 	@node -e "const nJwt=require('njwt');const s=process.env.JWT_SECRET||'dev-secret';const claims={sub:'demo-user',permissions:['municipality:read','municipality:create','price:read','price:create','package:create']};const t=nJwt.create(claims,s);console.log(t.compact());"
 
 # -------------------- Municipalities --------------------
-NAME ?= Stockholm
-CODE ?= 0180
-COUNTRY ?= Sweden
+
 
 municipalities.create:
 	@echo "POST /api/municipalities"
 	curl -sS -X POST "$(BASE_URL)/api/municipalities" \
 	  -H "Authorization: Bearer $(TOKEN)" \
 	  -H "Content-Type: application/json" \
-	  -d '{"name":"$(NAME)","code":"$(CODE)","country":"$(COUNTRY)"}'
+	  -d '{"name":"$(MUNICIPALITY_NAME)","code":"$(MUNICIPALITY_CODE)","country":"$(MUNICIPALITY_COUNTRY)"}'
 
 municipalities.get:
-	@echo "GET /api/municipalities/$(NAME)"
-	curl -sS "$(BASE_URL)/api/municipalities/$(NAME)" \
+	@echo "GET /api/municipalities/$(MUNICIPALITY_NAME)"
+	curl -sS "$(BASE_URL)/api/municipalities/$(MUNICIPALITY_NAME)" \
 	  -H "Authorization: Bearer $(TOKEN)"
 
 # -------------------- Prices --------------------
-PKG_TYPE ?= Basic
-VALUE_CENTS ?= 9900
-CURRENCY ?= SEK
-EFFECTIVE_DATE ?= $(NOW)
-MUNICIPALITY_NAME ?= Stockholm
-MUNICIPALITY_ID ?=
-YEAR ?= $(shell date -u +"%Y")
+
 
 prices.create:
 	@echo "POST /api/prices"
 	curl -sS -X POST "$(BASE_URL)/api/prices" \
 	  -H "Authorization: Bearer $(TOKEN)" \
 	  -H "Content-Type: application/json" \
-	  -d '{"packageType":"$(PKG_TYPE)","valueCents":$(VALUE_CENTS),"currency":"$(CURRENCY)","effectiveDate":"$(EFFECTIVE_DATE)","municipalityName":"$(MUNICIPALITY_NAME)"}'
+	  -d '{"packageType":"$(PACKAGE_TYPE)","valueCents":$(VALUE_CENTS),"currency":"$(CURRENCY)","effectiveDate":"$(EFFECTIVE_DATE)","municipalityName":"$(MUNICIPALITY_NAME)"}'
 
 prices.history:
-	@echo "GET /api/prices/history?packageType=$(PKG_TYPE)&year=$(YEAR)$(if $(MUNICIPALITY_ID),&municipalityId=$(MUNICIPALITY_ID),)"
-	curl -sS "$(BASE_URL)/api/prices/history?packageType=$(PKG_TYPE)&year=$(YEAR)$(if $(MUNICIPALITY_ID),&municipalityId=$(MUNICIPALITY_ID),)" \
+	@echo "GET /api/prices/history?packageType=$(PACKAGE_TYPE)&year=$(YEAR)"
+	curl -sS "$(BASE_URL)/api/prices/history?packageType=$(PACKAGE_TYPE)&year=$(YEAR)" \
 	  -H "Authorization: Bearer $(TOKEN)"
 
 prices.current:
-	@echo "GET /api/prices/current?packageType=$(PKG_TYPE)$(if $(MUNICIPALITY_ID),&municipalityId=$(MUNICIPALITY_ID),)"
-	curl -sS "$(BASE_URL)/api/prices/current?packageType=$(PKG_TYPE)$(if $(MUNICIPALITY_ID),&municipalityId=$(MUNICIPALITY_ID),)" \
+	@echo "GET /api/prices/current?packageType=$(PACKAGE_TYPE)"
+	curl -sS "$(BASE_URL)/api/prices/current?packageType=$(PACKAGE_TYPE)" \
 	  -H "Authorization: Bearer $(TOKEN)"
 
 prices.by_package:
-	@echo "GET /api/prices/package/$(PKG_TYPE)"
-	curl -sS "$(BASE_URL)/api/prices/package/$(PKG_TYPE)" \
+	@echo "GET /api/prices/package/$(PACKAGE_TYPE)"
+	curl -sS "$(BASE_URL)/api/prices/package/$(PACKAGE_TYPE)" \
 	  -H "Authorization: Bearer $(TOKEN)"
 
 # -------------------- Packages --------------------
@@ -88,13 +88,13 @@ packages.create:
 	curl -sS -X POST "$(BASE_URL)/api/packages" \
 	  -H "Authorization: Bearer $(TOKEN)" \
 	  -H "Content-Type: application/json" \
-	  -d '{"packageType":"$(PKG_TYPE)","valueCents":$(VALUE_CENTS),"currency":"$(CURRENCY)","effectiveDate":"$(EFFECTIVE_DATE)","municipalityName":"$(MUNICIPALITY_NAME)"}'
+	  -d '{"packageType":"$(PACKAGE_TYPE)","valueCents":$(VALUE_CENTS),"currency":"$(CURRENCY)","effectiveDate":"$(EFFECTIVE_DATE)","municipalityName":"$(MUNICIPALITY_NAME)"}'
 
 packages.add_price:
-	@echo "POST /api/packages/$(PKG_TYPE)/price"
-	curl -sS -X POST "$(BASE_URL)/api/packages/$(PKG_TYPE)/price" \
+	@echo "POST /api/packages/$(PACKAGE_TYPE)/price"
+	curl -sS -X POST "$(BASE_URL)/api/packages/$(PACKAGE_TYPE)/price" \
 	  -H "Authorization: Bearer $(TOKEN)" \
 	  -H "Content-Type: application/json" \
-	  -d '{"packageType":"$(PKG_TYPE)","valueCents":$(VALUE_CENTS),"currency":"$(CURRENCY)","effectiveDate":"$(EFFECTIVE_DATE)","municipalityName":"$(MUNICIPALITY_NAME)"}'
+	  -d '{"packageType":"$(PACKAGE_TYPE)","valueCents":$(VALUE_CENTS),"currency":"$(CURRENCY)","effectiveDate":"$(EFFECTIVE_DATE)","municipalityName":"$(MUNICIPALITY_NAME)"}'
 
 
