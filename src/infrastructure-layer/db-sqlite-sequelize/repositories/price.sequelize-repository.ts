@@ -5,6 +5,7 @@ import { Price as PriceModel } from "../models/price.sequelize-model";
 import { Package as PackageModel } from "../models/package.sequelize-model";
 import { Municipality as MunicipalityModel } from "../models/municipality.sequelize-model";
 import { PriceMapper } from "../mappers/price.infrastructure-mapper";
+import { withOrmErrorTranslation } from "../utils/error-translation";
 
 export class PriceSequelizeRepository implements IPriceRepository {
   async findByPackageType(packageType: PackageTypeValue): Promise<Price[]> {
@@ -34,6 +35,6 @@ export class PriceSequelizeRepository implements IPriceRepository {
       updatedAt: _price.updatedAt,
     };
 
-    await PriceModel.upsert(values);
+    await withOrmErrorTranslation(async () => PriceModel.upsert(values));
   }
 }

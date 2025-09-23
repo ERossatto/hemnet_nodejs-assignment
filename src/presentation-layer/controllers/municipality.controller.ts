@@ -5,6 +5,7 @@ import {
   GetMunicipalityByNameResponseDto,
 } from "../types";
 import { MunicipalityMapper } from "../mappers";
+import { BadRequestError, NotFoundError } from "../errors/http-errors";
 
 export interface IMunicipalityController {
   createMunicipality(
@@ -27,7 +28,7 @@ export class MunicipalityController implements IMunicipalityController {
 
     // Input validation (presentation layer responsibility)
     if (!name || !code || !country) {
-      throw new Error(
+      throw new BadRequestError(
         "Missing required fields: name, code, and country are required"
       );
     }
@@ -50,14 +51,14 @@ export class MunicipalityController implements IMunicipalityController {
     const { name } = req;
 
     if (!name) {
-      throw new Error("Municipality name is required");
+      throw new BadRequestError("Municipality name is required");
     }
 
     const municipality =
       await this.municipalityApplicationService.getMunicipalityByName(name);
 
     if (!municipality) {
-      throw new Error(`Municipality with name '${name}' not found`);
+      throw new NotFoundError(`Municipality with name '${name}' not found`);
     }
 
     // Map domain entity to response DTO using mapper
