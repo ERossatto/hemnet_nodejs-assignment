@@ -17,11 +17,6 @@ export abstract class Entity<T extends { id: Identifier }> {
       return false;
     }
 
-    const isSameObject = this === object;
-    if (isSameObject) {
-      return true;
-    }
-
     const isInstanceOfEntity = object instanceof Entity;
     if (!isInstanceOfEntity) {
       return false;
@@ -32,6 +27,8 @@ export abstract class Entity<T extends { id: Identifier }> {
       return false;
     }
 
-    return this._id.equals(object._id);
+    const isSameId = this._id.equals(object._id);
+
+    return isSameId;
   }
 }

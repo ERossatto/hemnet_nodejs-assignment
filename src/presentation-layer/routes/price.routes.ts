@@ -1,1 +1,82 @@
-// TODO: declare the routes for the price controller using the express
+import * as express from "express";
+import { ControllerFactory } from "../factories/controller.factory";
+import { auth } from "../middleware/auth.middleware";
+import { permit } from "../middleware/permit.middleware";
+import { asyncHandler } from "../utils/async-handler";
+
+const router = express.Router();
+
+/**
+ * GET /prices/history
+ * Get price history for a package type
+ */
+router.get(
+  "/history",
+  auth(),
+  permit("price:read"),
+  asyncHandler(async (req, res) => {
+    const priceController = ControllerFactory.createPriceController();
+    const result = await priceController.getPriceHistory({
+      packageType: String(req.query.packageType),
+      year: Number(req.query.year),
+      municipalityId: req.query.municipalityId
+        ? String(req.query.municipalityId)
+        : undefined,
+    });
+    res.status(200).json(result);
+  })
+);
+
+/**
+ * GET /prices/current
+ * Get current price for a package type
+ */
+router.get(
+  "/current",
+  auth(),
+  permit("price:read"),
+  asyncHandler(async (req, res) => {
+    const priceController = ControllerFactory.createPriceController();
+    const result = await priceController.getCurrentPrice({
+      packageType: String(req.query.packageType),
+      municipalityId: req.query.municipalityId
+        ? String(req.query.municipalityId)
+        : undefined,
+    });
+    res.status(200).json(result);
+  })
+);
+
+/**
+ * GET /prices/package/:packageType
+ * Get all prices for a specific package type
+ */
+router.get(
+  "/package/:packageType",
+  auth(),
+  permit("price:read"),
+  asyncHandler(async (req, res) => {
+    const priceController = ControllerFactory.createPriceController();
+    const result = await priceController.getAllPricesForPackageType({
+      packageType: req.params.packageType,
+    });
+    res.status(200).json(result);
+  })
+);
+
+/**
+ * POST /prices
+ * Create a new price
+ */
+router.post(
+  "/",
+  auth(),
+  permit("price:create"),
+  asyncHandler(async (req, res) => {
+    const priceController = ControllerFactory.createPriceController();
+    const result = await priceController.createPrice(req.body);
+    res.status(201).json(result);
+  })
+);
+
+export default router;

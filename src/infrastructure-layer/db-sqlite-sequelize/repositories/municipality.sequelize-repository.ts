@@ -4,6 +4,7 @@ import { MunicipalityId } from "../../../domain-layer/identifiers/municipality-i
 import { MunicipalityName } from "../../../domain-layer/value-objects/municipality-name.value-object";
 import { Municipality as MunicipalityModel } from "../models/municipality.sequelize-model";
 import { MunicipalityMapper } from "../mappers/municipality.infrastructure-mapper";
+import { withOrmErrorTranslation } from "../utils/error-translation";
 
 export class MunicipalitySequelizeRepository
   implements IMunicipalityRepository
@@ -21,14 +22,15 @@ export class MunicipalitySequelizeRepository
   }
 
   async save(entity: Municipality): Promise<void> {
-    // TODO: what if is there already a municipality with the same name?
-    await MunicipalityModel.upsert({
+    const values = {
       id: entity.id.value,
       name: entity.name.value,
       code: entity.code.value,
       country: entity.country.value,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
-    });
+    };
+
+    await withOrmErrorTranslation(async () => MunicipalityModel.upsert(values));
   }
 }

@@ -1,9 +1,0 @@
-
-The application layer should have the mappers needed to recognize what comes from presentation layer and what goes to there
-
-Example
-	- fromEntityToResponseDto
-
-Remember the application layer knows about the domain layer, but do not know about the presentation layer and infrastructure layer.
-So the way of recognizing what is comming and going to the presentation layer is between these mappers.
-The infrastructure layer implements the repository interfaces of the domain layer

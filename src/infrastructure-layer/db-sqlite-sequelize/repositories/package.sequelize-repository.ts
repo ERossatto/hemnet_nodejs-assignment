@@ -5,6 +5,7 @@ import { PremiumPackage } from "../../../domain-layer/entities/packages/premium-
 import { PackageTypeValue } from "../../../domain-layer/value-objects/package-type.value-object";
 import { Package as PackageModel } from "../models/package.sequelize-model";
 import { PackageMapper } from "../mappers/package.infrastructure-mapper";
+import { withOrmErrorTranslation } from "../utils/error-translation";
 
 export class PackageSequelizeRepository implements IPackageRepository {
   async findByPackageType(
@@ -24,6 +25,6 @@ export class PackageSequelizeRepository implements IPackageRepository {
       updatedAt: pkg.updatedAt,
     };
 
-    await PackageModel.upsert(packageData);
+    await withOrmErrorTranslation(async () => PackageModel.upsert(packageData));
   }
 }
