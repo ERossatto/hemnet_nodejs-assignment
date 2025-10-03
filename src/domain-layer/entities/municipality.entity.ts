@@ -55,7 +55,7 @@ export class Municipality extends Entity<MunicipalityProps> {
     const now = new Date();
 
     return new Municipality({
-      id: new MunicipalityId(),
+      id: MunicipalityId.create(),
       name: props.name,
       code: props.code,
       country: props.country,

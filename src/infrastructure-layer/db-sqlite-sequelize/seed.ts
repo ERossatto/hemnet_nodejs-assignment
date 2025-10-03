@@ -130,7 +130,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 5000,
-        packageId: basic.id,
+        packageType: PACKAGE_TYPES.Basic,
         currency: "SEK",
         effectiveDate: baseDate,
         municipalityId: null, // General price
@@ -140,7 +140,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 10_000,
-        packageId: basic.id,
+        packageType: PACKAGE_TYPES.Basic,
         currency: "SEK",
         effectiveDate: new Date("2024-06-01"),
         municipalityId: stockholmFromDb.id, // Stockholm-specific price
@@ -157,7 +157,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 19_990,
-        packageId: plus.id,
+        packageType: PACKAGE_TYPES.Plus,
         currency: "SEK",
         effectiveDate: baseDate,
         municipalityId: null, // General price
@@ -167,7 +167,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 29_900,
-        packageId: plus.id,
+        packageType: PACKAGE_TYPES.Plus,
         currency: "SEK",
         effectiveDate: new Date("2024-03-01"),
         municipalityId: gothenburgFromDb.id, // Gothenburg-specific price
@@ -177,7 +177,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 39_900,
-        packageId: plus.id,
+        packageType: PACKAGE_TYPES.Plus,
         currency: "SEK",
         effectiveDate: new Date("2024-09-01"),
         municipalityId: malmoFromDb.id, // Malmö-specific price
@@ -194,7 +194,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 55_000,
-        packageId: premium.id,
+        packageType: PACKAGE_TYPES.Premium,
         currency: "SEK",
         effectiveDate: baseDate,
         municipalityId: null, // General price
@@ -204,7 +204,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 66_600,
-        packageId: premium.id,
+        packageType: PACKAGE_TYPES.Premium,
         currency: "SEK",
         effectiveDate: new Date("2024-02-01"),
         municipalityId: stockholm.id, // Stockholm-specific price
@@ -214,7 +214,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 77_700,
-        packageId: premium.id,
+        packageType: PACKAGE_TYPES.Premium,
         currency: "SEK",
         effectiveDate: new Date("2024-05-01"),
         municipalityId: gothenburg.id, // Gothenburg-specific price
@@ -224,7 +224,7 @@ export const seedDb = async () => {
       {
         id: randomUUID(),
         priceCents: 88_800,
-        packageId: premium.id,
+        packageType: PACKAGE_TYPES.Premium,
         currency: "SEK",
         effectiveDate: new Date("2024-08-01"),
         municipalityId: malmo.id, // Malmö-specific price

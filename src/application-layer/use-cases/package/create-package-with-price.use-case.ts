@@ -6,6 +6,7 @@ import {
   ValueCents,
   Currency,
   MunicipalityName,
+  PackageType,
 } from "../../../domain-layer";
 import { UseCase } from "../contracts";
 
@@ -31,13 +32,14 @@ export class CreatePackageWithPriceUseCase
     const valueCents = ValueCents.create(input.valueCents);
     const currency = Currency.create(input.currency);
     const effectiveDate = new Date(input.effectiveDate);
+    const packageType = PackageType.create(input.packageType);
 
     const municipalityName = input.municipalityName
       ? MunicipalityName.create(input.municipalityName)
       : undefined;
 
     return await this.priceDomainService.createPriceForPackageType({
-      packageType: input.packageType,
+      packageType,
       valueCents,
       currency,
       effectiveDate,

@@ -1,14 +1,15 @@
 import { Price as PriceModel } from "../models/price.sequelize-model";
-import { Package as PackageModel } from "../models/package.sequelize-model";
 import { Municipality as MunicipalityModel } from "../models/municipality.sequelize-model";
 import { Price } from "../../../domain-layer/aggregates/price.aggregate";
 import { PriceId } from "../../../domain-layer/identifiers/price-id.identifier";
-import { ValueCents, Currency } from "../../../domain-layer/value-objects";
-import { PackageMapper } from "./package.infrastructure-mapper";
+import {
+  ValueCents,
+  Currency,
+  PackageType,
+} from "../../../domain-layer/value-objects";
 import { MunicipalityMapper } from "./municipality.infrastructure-mapper";
 
 export type PriceMapperRow = PriceModel & {
-  Package: PackageModel;
   Municipality?: MunicipalityModel;
 };
 
@@ -18,8 +19,7 @@ export class PriceMapper {
       row &&
       typeof row.id === "string" &&
       typeof row.priceCents === "number" &&
-      row.Package &&
-      typeof row.Package.id === "string"
+      typeof row.packageType === "string"
     );
   }
 
@@ -28,19 +28,17 @@ export class PriceMapper {
       throw new Error("Invalid price row structure");
     }
 
-    const pkg = PackageMapper.toDomain(row.Package);
-
     const municipality = row.Municipality
       ? MunicipalityMapper.toDomain(row.Municipality)
       : undefined;
 
     return new Price({
       id: new PriceId(row.id),
-      package: pkg,
+      packageType: PackageType.create(row.packageType as any),
       valueCents: ValueCents.create(row.priceCents),
       currency: Currency.create(row.currency),
       effectiveDate: row.effectiveDate,
-      municipality,
+      municipalityId: municipality?.id,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });

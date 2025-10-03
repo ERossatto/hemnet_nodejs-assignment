@@ -1,14 +1,13 @@
 import {
   type CreationOptional,
   DataTypes,
-  type ForeignKey,
   type InferAttributes,
   type InferCreationAttributes,
   Model,
 } from "sequelize";
 import { sequelizeConnection } from "../config";
-import { Package } from "./package.sequelize-model";
 import { Municipality } from "./municipality.sequelize-model";
+import { PACKAGE_TYPES } from "../../../domain-layer/value-objects/package-type.value-object";
 
 class Price extends Model<
   InferAttributes<Price>,
@@ -16,7 +15,7 @@ class Price extends Model<
 > {
   declare id: string;
   declare priceCents: number;
-  declare packageId: ForeignKey<Package["id"]>;
+  declare packageType: string;
   declare municipalityId: CreationOptional<Municipality["id"] | null>;
   declare currency: string;
   declare effectiveDate: Date;
@@ -31,9 +30,12 @@ Price.init(
       allowNull: false,
       primaryKey: true,
     },
-    packageId: {
-      type: DataTypes.UUID,
+    packageType: {
+      type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        isIn: [Object.values(PACKAGE_TYPES) as string[]],
+      },
     },
     priceCents: {
       type: DataTypes.INTEGER,
@@ -65,5 +67,4 @@ Price.init(
 
 export { Price };
 
-Price.belongsTo(Package, { foreignKey: "packageId" });
 Price.belongsTo(Municipality, { foreignKey: "municipalityId" });

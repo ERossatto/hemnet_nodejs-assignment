@@ -17,7 +17,7 @@ export class PlusPackage extends AbstractPackage {
 
   public static create(): PlusPackage {
     const now = new Date();
-    const packageId = new PackageId();
+    const packageId = PackageId.create();
     const type = PackageType.create(PACKAGE_TYPES.Plus);
     const storage = PackageStorageCapacity.create(type);
     const backup = PackageBackupFrequency.create(type);

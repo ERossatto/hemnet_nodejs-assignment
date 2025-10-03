@@ -82,7 +82,7 @@ export class PriceHistoryDomainService implements IPriceHistoryDomainService {
       pricingPeriods.push({
         price: current,
         effectivePeriod,
-        municipalityId: current.municipality?.id,
+        municipalityId: current.municipalityId,
       });
     }
 

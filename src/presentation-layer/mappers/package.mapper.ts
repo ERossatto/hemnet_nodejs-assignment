@@ -17,8 +17,8 @@ export class PackageMapper {
       valueCents: price.valueCents.value,
       currency: price.currency.value,
       effectiveDate: price.effectiveDate.toISOString(),
-      packageType: price.package.type.value,
-      municipalityId: price.municipality?.id.value,
+      packageType: price.packageType.value,
+      municipalityId: price.municipalityId?.value,
     };
   }
 

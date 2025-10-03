@@ -121,7 +121,7 @@ describe("Package Use-Cases", () => {
     // Filter out the seeded prices (which have different dates) and get only our test prices
     const testPrices = allPrices.filter(
       (price) =>
-        price.effectiveDate.getFullYear() === 2025 && !price.municipality // Standard pricing (no municipality)
+        price.effectiveDate.getFullYear() === 2025 && !price.municipalityId // Standard pricing (no municipality)
     );
 
     // Step 5: Verify that there are two prices in the price history
@@ -158,8 +158,8 @@ describe("Package Use-Cases", () => {
 
     // Step 4: Verify the price was set correctly
     expect(municipalityPrice.valueCents.value).toBe(200_00);
-    expect(municipalityPrice.municipality).toBeDefined();
-    expect(municipalityPrice.municipality!.name.value).toBe("Göteborg");
+    expect(municipalityPrice.municipalityId).toBeDefined();
+    expect(municipalityPrice.municipalityId!.value).toBe(goteborg!.id.value);
 
     // Step 5: Get current price for the specific municipality
     const currentPriceForMunicipality = await getCurrentPrice.execute({
@@ -171,9 +171,9 @@ describe("Package Use-Cases", () => {
     expect(currentPriceForMunicipality).not.toBeNull();
     expect(currentPriceForMunicipality!.valueCents.value).toBe(200_00);
     // Step 7: Verify that the municipality is Göteborg
-    expect(currentPriceForMunicipality!.municipality).toBeDefined();
-    expect(currentPriceForMunicipality!.municipality!.name.value).toBe(
-      "Göteborg"
+    expect(currentPriceForMunicipality!.municipalityId).toBeDefined();
+    expect(currentPriceForMunicipality!.municipalityId!.value).toBe(
+      goteborg!.id.value
     );
   });
 });

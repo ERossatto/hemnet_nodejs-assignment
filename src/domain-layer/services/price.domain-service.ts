@@ -6,16 +6,16 @@ import { Price } from "../aggregates/price.aggregate";
 import { IPackageRepository } from "../repositories/package.domain-interface-repository";
 import { Municipality } from "../entities/municipality.entity";
 import { IMunicipalityRepository } from "../repositories/municipality.domain-interface-repository";
-import { PackageTypeValue } from "../value-objects/package-type.value-object";
+import { PackageType } from "../value-objects/package-type.value-object";
 import { MunicipalityName } from "../value-objects/municipality-name.value-object";
 
 export interface IPriceDomainService {
   getCurrentPriceByPackageType(
-    packageType: PackageTypeValue,
+    packageType: PackageType,
     municipalityId?: MunicipalityId
   ): Promise<Price | null>;
   createPriceForPackageType(props: {
-    packageType: PackageTypeValue;
+    packageType: PackageType;
     valueCents: ValueCents;
     currency: Currency;
     effectiveDate: Date;
@@ -31,14 +31,15 @@ export class PriceDomainService implements IPriceDomainService {
   ) {}
 
   public async getCurrentPriceByPackageType(
-    packageType: PackageTypeValue,
+    packageType: PackageType,
     municipalityId?: MunicipalityId
   ): Promise<Price | null> {
-    const packageEntity =
-      await this.packageRepository.findByPackageType(packageType);
+    const packageEntity = await this.packageRepository.findByPackageType(
+      packageType.value
+    );
 
     if (!packageEntity) {
-      throw new Error(`Package with type ${packageType} not found`);
+      throw new Error(`Package with type ${packageType.value} not found`);
     }
 
     let municipalityExists = false;
@@ -55,15 +56,15 @@ export class PriceDomainService implements IPriceDomainService {
 
     const now = new Date();
     const allPricesForPackage =
-      await this.priceRepository.findManyByPackageType(packageType);
+      await this.priceRepository.findManyByPackageType(packageType.value);
 
     const effectivePrices = allPricesForPackage.filter(
-      (p) => p.package.id.equals(packageEntity.id) && p.effectiveDate <= now
+      (p) => p.packageType.isEqual(packageType) && p.effectiveDate <= now
     );
 
     if (municipalityId && municipalityExists) {
       const municipalCandidates = effectivePrices
-        .filter((p) => p.municipality?.id.equals(municipalityId))
+        .filter((p) => p.municipalityId?.equals(municipalityId))
         .sort((a, b) => b.effectiveDate.getTime() - a.effectiveDate.getTime());
 
       if (municipalCandidates.length > 0) {
@@ -79,18 +80,18 @@ export class PriceDomainService implements IPriceDomainService {
   }
 
   public async createPriceForPackageType(props: {
-    packageType: PackageTypeValue;
+    packageType: PackageType;
     valueCents: ValueCents;
     currency: Currency;
     effectiveDate: Date;
     municipalityName?: MunicipalityName;
   }): Promise<Price> {
     const packageEntity = await this.packageRepository.findByPackageType(
-      props.packageType
+      props.packageType.value
     );
 
     if (!packageEntity) {
-      throw new Error(`Package with type ${props.packageType} not found`);
+      throw new Error(`Package with type ${props.packageType.value} not found`);
     }
 
     let municipality: Municipality | undefined = undefined;
@@ -110,11 +111,11 @@ export class PriceDomainService implements IPriceDomainService {
     }
 
     const newPrice = Price.create({
-      package: packageEntity,
+      packageType: props.packageType,
       valueCents: props.valueCents,
       currency: props.currency,
       effectiveDate: props.effectiveDate,
-      municipality,
+      municipalityId: municipality?.id,
     });
 
     await this.priceRepository.save(newPrice);

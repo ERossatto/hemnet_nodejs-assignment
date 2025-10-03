@@ -3,6 +3,7 @@ import {
   PackageTypeValue,
   Price,
   MunicipalityId,
+  PackageType,
 } from "../../../domain-layer";
 import { UseCase } from "../contracts";
 
@@ -18,7 +19,7 @@ export class GetCurrentPriceUseCase
 
   async execute(input: GetCurrentPriceInput): Promise<Price | null> {
     return await this.priceDomainService.getCurrentPriceByPackageType(
-      input.packageType,
+      PackageType.create(input.packageType),
       input.municipalityId
     );
   }

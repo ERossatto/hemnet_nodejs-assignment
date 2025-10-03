@@ -2,15 +2,14 @@ import { AggregateRoot } from "../ddd-definitions/aggregate-root.ddd";
 import { ValueCents } from "../value-objects/value-cents.value-object";
 import { Currency } from "../value-objects/currency.value-object";
 import { PriceId } from "../identifiers/price-id.identifier";
-import { Municipality } from "../entities/municipality.entity";
 import { MunicipalityId } from "../identifiers/municipality-id.identifier";
-import { BasicPackage, PlusPackage, PremiumPackage } from "..";
+import { PackageType } from "../value-objects/package-type.value-object";
 
 interface PriceProps {
   id: PriceId;
-  package: BasicPackage | PlusPackage | PremiumPackage;
+  packageType: PackageType;
   valueCents: ValueCents;
-  municipality?: Municipality;
+  municipalityId?: MunicipalityId;
   currency: Currency;
   effectiveDate: Date;
   createdAt: Date;
@@ -28,8 +27,8 @@ export class Price extends AggregateRoot<PriceProps> {
     return this.props.id;
   }
 
-  get package(): PriceProps["package"] {
-    return this.props.package;
+  get packageType(): PriceProps["packageType"] {
+    return this.props.packageType;
   }
 
   get valueCents(): ValueCents {
@@ -44,8 +43,8 @@ export class Price extends AggregateRoot<PriceProps> {
     return new Date(this.props.effectiveDate);
   }
 
-  get municipality(): Municipality | undefined {
-    return this.props.municipality;
+  get municipalityId(): MunicipalityId | undefined {
+    return this.props.municipalityId;
   }
 
   get createdAt(): Date {
@@ -60,12 +59,12 @@ export class Price extends AggregateRoot<PriceProps> {
     const now = new Date();
 
     return new Price({
-      id: new PriceId(),
-      package: props.package,
+      id: PriceId.create(),
+      packageType: props.packageType,
       valueCents: props.valueCents,
       currency: props.currency,
       effectiveDate: new Date(props.effectiveDate),
-      municipality: props.municipality,
+      municipalityId: props.municipalityId,
       createdAt: now,
       updatedAt: now,
     });
@@ -76,11 +75,11 @@ export class Price extends AggregateRoot<PriceProps> {
       return true;
     }
 
-    return this.props.municipality!.id.equals(municipalityId);
+    return this.props.municipalityId?.equals(municipalityId) ?? false;
   }
 
   public isStandardPricing(): boolean {
-    return !this.props.municipality;
+    return !this.props.municipalityId;
   }
 
   public hasSameValueCentsAs(other: Price): boolean {
